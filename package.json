@@ -10,8 +10,10 @@
     "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "adhan": "^4.4.3",
     "canvas-confetti": "^1.9.4",
+    "framer-motion": "^12.38.0",
     "idb": "^8.0.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

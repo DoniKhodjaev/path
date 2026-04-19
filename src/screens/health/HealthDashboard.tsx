@@ -64,13 +64,13 @@ export function HealthDashboard({ onNavigate }: Props) {
 
   return (
     <div className="p-4 pb-20 space-y-6">
-      <h1 className="font-heading text-2xl text-gold">Здоровье</h1>
+      <h1 className="text-h1 text-gold">Здоровье</h1>
 
       {/* Metrics summary */}
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3 space-y-3">
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <p className="font-mono text-[10px] text-txt/40 uppercase tracking-wider">Вес</p>
+            <p className="text-micro text-ink-mute">Вес</p>
             <p className="font-mono text-lg text-txt">
               {latestWeight ? `${latestWeight.weight} кг` : '—'}
               {weightDiff !== 0 && (
@@ -81,15 +81,15 @@ export function HealthDashboard({ onNavigate }: Props) {
             </p>
           </div>
           <div>
-            <p className="font-mono text-[10px] text-txt/40 uppercase tracking-wider">Сон</p>
+            <p className="text-micro text-ink-mute">Сон</p>
             <p className="font-mono text-lg text-txt">{sleepDuration ?? '—'}</p>
           </div>
           <div>
-            <p className="font-mono text-[10px] text-txt/40 uppercase tracking-wider">Энергия</p>
+            <p className="text-micro text-ink-mute">Энергия</p>
             <p className="font-mono text-lg text-txt">{energy > 0 ? `${energy}/10` : '—'}</p>
           </div>
           <div>
-            <p className="font-mono text-[10px] text-txt/40 uppercase tracking-wider">Симптомы</p>
+            <p className="text-micro text-ink-mute">Симптомы</p>
             <p className="font-mono text-lg text-txt">
               {sympImproved > 0 ? `${sympImproved} из ${SYMPTOM_LIST.length} ↓` : '—'}
             </p>
@@ -99,12 +99,12 @@ export function HealthDashboard({ onNavigate }: Props) {
 
       {/* Upcoming visit */}
       {upcoming && (
-        <div className="bg-navy-2 rounded-xl p-4 border border-accent-blue/20">
-          <p className="font-mono text-[10px] text-accent-blue uppercase tracking-wider mb-1">Ближайший визит</p>
+        <div className="bg-twilight rounded-2xl p-4 border border-calm/20">
+          <p className="text-micro text-calm mb-1">Ближайший визит</p>
           <p className="font-mono text-sm text-txt">
             {upcoming.date} {upcoming.time} — {upcoming.specialist}
           </p>
-          <p className="font-mono text-xs text-txt/50">{upcoming.clinic}</p>
+          <p className="font-mono text-xs text-ink-mute">{upcoming.clinic}</p>
         </div>
       )}
 
@@ -112,7 +112,7 @@ export function HealthDashboard({ onNavigate }: Props) {
       <div className="grid grid-cols-2 gap-3">
         {cards.map(c => (
           <button key={c.screen} onClick={() => onNavigate(c.screen)}
-            className="bg-navy-2 rounded-xl p-4 border border-navy-3 hover:border-gold/20 transition-colors text-left">
+            className="bg-twilight rounded-2xl p-4 border border-dusk hover:border-gold/20 transition-all duration-200 text-left">
             <span className="text-2xl">{c.icon}</span>
             <p className="font-mono text-sm text-txt mt-2">{c.label}</p>
           </button>

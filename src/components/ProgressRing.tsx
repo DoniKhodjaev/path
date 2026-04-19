@@ -20,7 +20,7 @@ export function ProgressRing({
   return (
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#151d35" strokeWidth={strokeWidth} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="var(--color-dusk)" strokeWidth={strokeWidth} />
         <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth}
           strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset}
           className="transition-all duration-700 ease-out" />

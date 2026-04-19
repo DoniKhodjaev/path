@@ -11,19 +11,19 @@ export function Levels() {
 
   return (
     <div className="p-4 pb-20 space-y-6">
-      <h1 className="font-heading text-2xl text-gold">Уровни</h1>
+      <h1 className="text-h1 text-gold">Уровни</h1>
 
-      <div className="bg-navy-2 rounded-xl p-6 border border-navy-3 flex flex-col items-center">
+      <div className="bg-twilight rounded-xl p-6 border border-dusk flex flex-col items-center">
         <ProgressRing progress={progress} size={160} strokeWidth={8}>
           <div className="text-center">
             <p className="font-heading text-3xl text-gold">{currentLevel.level}</p>
-            <p className="font-heading text-sm text-txt/80">{currentLevel.name}</p>
+            <p className="font-heading text-sm text-ink">{currentLevel.name}</p>
           </div>
         </ProgressRing>
         <div className="mt-4 text-center">
           <p className="font-mono text-lg text-gold">{xp.toLocaleString()} XP</p>
           {needed > 0 && (
-            <p className="font-mono text-xs text-txt/40 mt-1">
+            <p className="font-mono text-xs text-ink-mute mt-1">
               {current.toLocaleString()} / {needed.toLocaleString()} до следующего уровня
             </p>
           )}
@@ -32,17 +32,17 @@ export function Levels() {
 
       <div>
         <h2 className="font-heading text-lg text-txt mb-3">Все уровни</h2>
-        <div className="bg-navy-2 rounded-xl border border-navy-3 divide-y divide-navy-3">
+        <div className="bg-twilight rounded-xl border border-dusk divide-y divide-dusk">
           {LEVELS.map((lvl) => {
             const isReached = xp >= lvl.minXp
             const isCurrent = currentLevel.level === lvl.level
             return (
               <div key={lvl.level} className={`flex items-center justify-between p-3 ${isCurrent ? 'bg-gold/5' : ''}`}>
                 <div className="flex items-center gap-3">
-                  <span className={`font-mono text-sm w-6 text-center ${isReached ? 'text-gold' : 'text-txt/30'}`}>{lvl.level}</span>
-                  <span className={`font-heading text-sm ${isReached ? 'text-txt' : 'text-txt/30'}`}>{lvl.name}</span>
+                  <span className={`font-mono text-sm w-6 text-center ${isReached ? 'text-gold' : 'text-ink-mute'}`}>{lvl.level}</span>
+                  <span className={`font-heading text-sm ${isReached ? 'text-txt' : 'text-ink-mute'}`}>{lvl.name}</span>
                 </div>
-                <span className="font-mono text-xs text-txt/40">
+                <span className="font-mono text-xs text-ink-mute">
                   {lvl.maxXp === Infinity ? `${lvl.minXp.toLocaleString()}+` : `${lvl.minXp.toLocaleString()} — ${lvl.maxXp.toLocaleString()}`}
                 </span>
               </div>
@@ -61,9 +61,9 @@ export function Levels() {
         </div>
       </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <h3 className="font-heading text-sm text-txt/80 mb-2">Как заработать XP</h3>
-        <div className="space-y-1 font-mono text-xs text-txt/50">
+      <div className="bg-twilight rounded-xl p-4 border border-dusk">
+        <h3 className="font-heading text-sm text-ink mb-2">Как заработать XP</h3>
+        <div className="space-y-1 font-mono text-xs text-ink-mute">
           <p>Намаз выполнен: +10 XP</p>
           <p>Все 5 намазов: +30 XP бонус</p>
           <p>Привычка выполнена: +10 XP</p>

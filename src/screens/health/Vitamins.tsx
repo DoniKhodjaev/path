@@ -23,19 +23,19 @@ export function Vitamins() {
   }
 
   const last7 = getLast7Days()
-  const inputCls = "w-full bg-navy-3 rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-navy-3 focus:border-gold/50"
+  const inputCls = "w-full bg-dusk rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-dusk focus:border-gold/30"
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="font-heading text-xl text-txt">Витамины и лекарства</h2>
+        <h2 className="text-h1 text-gold">Витамины и лекарства</h2>
         <button onClick={() => setShowAdd(!showAdd)} className="font-mono text-xs text-gold">
           {showAdd ? 'Отмена' : '+ Добавить'}
         </button>
       </div>
 
       {showAdd && (
-        <div className="bg-navy-2 rounded-xl p-4 border border-gold/20 space-y-3">
+        <div className="bg-twilight rounded-2xl p-4 border border-gold/20 space-y-3">
           <input placeholder="Название (Витамин D3)" value={form.name}
             onChange={e => setForm({...form, name: e.target.value})} className={inputCls} />
           <input placeholder="Дозировка (5000 МЕ)" value={form.dosage}
@@ -43,7 +43,7 @@ export function Vitamins() {
           <input placeholder="Когда (утром с едой)" value={form.timing}
             onChange={e => setForm({...form, timing: e.target.value})} className={inputCls} />
           <div>
-            <label className="font-mono text-[10px] text-txt/40 block mb-1">Курс до</label>
+            <label className="font-mono text-[10px] text-ink-mute block mb-1">Курс до</label>
             <input type="date" value={form.courseEnd}
               onChange={e => setForm({...form, courseEnd: e.target.value})} className={inputCls} />
           </div>
@@ -70,18 +70,18 @@ export function Vitamins() {
         })()
 
         return (
-          <div key={med.id} className="bg-navy-2 rounded-xl p-4 border border-navy-3 space-y-3">
+          <div key={med.id} className="bg-twilight rounded-2xl p-4 border border-dusk space-y-3">
             <div className="flex justify-between items-start">
               <div>
                 <p className="font-heading text-base text-txt">{med.name}</p>
-                <p className="font-mono text-xs text-txt/50">{med.dosage} · {med.timing}</p>
+                <p className="font-mono text-xs text-ink-mute">{med.dosage} · {med.timing}</p>
               </div>
               <button onClick={() => health.removeMedication(med.id)}
-                className="font-mono text-xs text-accent-red/40 hover:text-accent-red">×</button>
+                className="font-mono text-xs text-danger/40 hover:text-danger">×</button>
             </div>
 
             {daysLeft !== null && (
-              <p className="font-mono text-xs text-txt/40">
+              <p className="font-mono text-xs text-ink-mute">
                 Курс до {med.courseEnd} · осталось {daysLeft} дней
               </p>
             )}
@@ -90,8 +90,8 @@ export function Vitamins() {
             <button onClick={() => health.toggleMedicationDay(med.id, today)}
               className={`w-full py-2.5 rounded font-mono text-sm transition-all ${
                 takenToday
-                  ? 'bg-accent-green/20 text-accent-green border border-accent-green/30'
-                  : 'bg-navy-3 text-txt/60 hover:text-gold hover:border-gold/30 border border-navy-3'
+                  ? 'bg-sacred/20 text-sacred border border-sacred/30'
+                  : 'bg-dusk text-ink-mute hover:text-gold hover:border-gold/30 border border-dusk'
               }`}>
               {takenToday ? '✓ Принято сегодня' : 'Отметить приём'}
             </button>
@@ -100,32 +100,32 @@ export function Vitamins() {
             <div className="flex gap-1">
               {last7.map(date => (
                 <div key={date} className={`flex-1 h-2 rounded-sm ${
-                  med.takenDays[date] ? 'bg-accent-green' : 'bg-navy-3/60'
+                  med.takenDays[date] ? 'bg-sacred' : 'bg-dusk/60'
                 }`} />
               ))}
             </div>
             {streak > 0 && (
-              <p className="font-mono text-[10px] text-accent-green">{streak} дней подряд</p>
+              <p className="font-mono text-[10px] text-sacred">{streak} дней подряд</p>
             )}
           </div>
         )
       })}
 
       {health.medications.length === 0 && !showAdd && (
-        <div className="bg-navy-2 rounded-xl p-6 border border-navy-3 text-center">
-          <p className="font-mono text-sm text-txt/40">Пока ничего не назначено</p>
-          <p className="font-mono text-xs text-txt/30 mt-1">Добавьте после визита к врачу</p>
+        <div className="bg-twilight rounded-2xl p-6 border border-dusk text-center">
+          <p className="font-mono text-sm text-ink-mute">Пока ничего не назначено</p>
+          <p className="font-mono text-xs text-ink-mute mt-1">Добавьте после визита к врачу</p>
         </div>
       )}
 
       {/* Vitamin info reference */}
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <p className="font-mono text-xs text-txt/60 uppercase tracking-wider mb-3">Справочник</p>
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <p className="font-mono text-xs text-ink-mute uppercase tracking-wider mb-3">Справочник</p>
         <div className="space-y-3">
           {Object.entries(VITAMIN_INFO).map(([name, info]) => (
             <div key={name}>
               <p className="font-mono text-sm text-gold">{name}</p>
-              <p className="font-mono text-xs text-txt/50 leading-relaxed">{info}</p>
+              <p className="font-mono text-xs text-ink-mute leading-relaxed">{info}</p>
             </div>
           ))}
         </div>

@@ -73,22 +73,22 @@ export function Photos() {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-heading text-xl text-txt">Фото прогресса</h2>
+      <h2 className="text-h1 text-gold">Фото прогресса</h2>
 
       {/* Type selector */}
       <div className="flex gap-2">
         {types.map(t => (
           <button key={t.id} onClick={() => setSelectedType(t.id)}
             className={`flex-1 py-2 font-mono text-xs rounded transition-colors ${
-              selectedType === t.id ? 'bg-gold/20 text-gold border border-gold/30' : 'bg-navy-3 text-txt/50 border border-navy-3'
+              selectedType === t.id ? 'bg-gold/20 text-gold border border-gold/30' : 'bg-dusk text-ink-mute border border-dusk'
             }`}>{t.label}</button>
         ))}
       </div>
 
       {/* Add photo */}
-      <label className="block bg-navy-2 rounded-xl p-6 border-2 border-dashed border-navy-3 hover:border-gold/30 cursor-pointer text-center transition-colors">
-        <p className="font-mono text-sm text-txt/40">Нажмите чтобы добавить фото</p>
-        <p className="font-mono text-[10px] text-txt/20 mt-1">Сохраняется только на устройстве</p>
+      <label className="block bg-twilight rounded-2xl p-6 border-2 border-dashed border-dusk hover:border-gold/30 cursor-pointer text-center transition-colors">
+        <p className="font-mono text-sm text-ink-mute">Нажмите чтобы добавить фото</p>
+        <p className="font-mono text-[10px] text-ink-mute mt-1">Сохраняется только на устройстве</p>
         <input type="file" accept="image/*" capture="environment" onChange={handleAddPhoto} className="hidden" />
       </label>
 
@@ -96,35 +96,35 @@ export function Photos() {
       {filteredPhotos.length > 0 ? (
         <div className="space-y-4">
           {filteredPhotos.map(photo => (
-            <div key={photo.id} className="bg-navy-2 rounded-xl overflow-hidden border border-navy-3">
+            <div key={photo.id} className="bg-twilight rounded-2xl overflow-hidden border border-dusk">
               <img src={photo.url} alt={photo.type} className="w-full aspect-[3/4] object-cover" />
               <div className="flex justify-between items-center p-3">
-                <span className="font-mono text-xs text-txt/40">{photo.date}</span>
+                <span className="font-mono text-xs text-ink-mute">{photo.date}</span>
                 <button onClick={() => handleDelete(photo.id)}
-                  className="font-mono text-xs text-accent-red/40 hover:text-accent-red">Удалить</button>
+                  className="font-mono text-xs text-danger/40 hover:text-danger">Удалить</button>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="bg-navy-2 rounded-xl p-6 border border-navy-3 text-center">
-          <p className="font-mono text-sm text-txt/30">Нет фото в категории "{types.find(t => t.id === selectedType)?.label}"</p>
-          <p className="font-mono text-[10px] text-txt/20 mt-1">Делайте фото раз в 2 недели для отслеживания прогресса</p>
+        <div className="bg-twilight rounded-2xl p-6 border border-dusk text-center">
+          <p className="font-mono text-sm text-ink-mute">Нет фото в категории "{types.find(t => t.id === selectedType)?.label}"</p>
+          <p className="font-mono text-[10px] text-ink-mute mt-1">Делайте фото раз в 2 недели для отслеживания прогресса</p>
         </div>
       )}
 
       {/* Compare mode hint */}
       {photos.length >= 2 && (
-        <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-          <p className="font-mono text-xs text-txt/40">
+        <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+          <p className="font-mono text-xs text-ink-mute">
             Через 6 месяцев вы увидите разницу. Продолжайте фотографировать каждые 2 недели.
           </p>
         </div>
       )}
 
       {/* Privacy note */}
-      <div className="bg-navy-2 rounded-xl p-3 border border-navy-3">
-        <p className="font-mono text-[10px] text-txt/30">
+      <div className="bg-twilight rounded-2xl p-3 border border-dusk">
+        <p className="font-mono text-[10px] text-ink-mute">
           Все фото хранятся только в IndexedDB на вашем устройстве. Ничего не отправляется в облако.
         </p>
       </div>

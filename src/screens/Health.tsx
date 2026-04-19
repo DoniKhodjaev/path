@@ -14,7 +14,7 @@ export function Health() {
   if (sub !== 'main') {
     return (
       <div className="p-4 pb-20">
-        <button onClick={() => setSub('main')} className="font-mono text-xs text-gold/60 hover:text-gold mb-4 flex items-center gap-1">
+        <button onClick={() => setSub('main')} className="font-mono text-xs text-gold/50 hover:text-gold mb-4 flex items-center gap-1">
           ← Здоровье
         </button>
         {sub === 'doctors' && <Doctors />}

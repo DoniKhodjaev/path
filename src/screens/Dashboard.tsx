@@ -1,11 +1,27 @@
 import { useMemo } from 'react'
+import { motion } from 'framer-motion'
 import { usePrayers } from '../hooks/usePrayers'
 import { useStore } from '../store/useStore'
 import { useHealthStore } from '../store/useHealthStore'
-import { PrayerCard } from '../components/PrayerCard'
 import { formatDateRussian, getPathProgress, todayStr } from '../utils/dates'
 import { QUOTES, HABITS } from '../utils/constants'
 import { useGamification } from '../hooks/useGamification'
+import { getLevelForXp } from '../utils/gamification'
+import { hapticTap } from '../utils/haptic'
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.09,
+    },
+  },
+}
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] as const } },
+}
 
 export function Dashboard() {
   const { prayers, nextPrayer, countdown } = usePrayers()
@@ -63,8 +79,11 @@ export function Dashboard() {
   }, [dayRecord])
 
   const mainStreak = store.streaks.main?.current ?? 0
+  const xp = store.xp ?? 0
+  const levelInfo = getLevelForXp(xp)
 
   const handlePrayerToggle = (prayerId: string) => {
+    hapticTap()
     const wasDone = dayRecord?.prayers[prayerId]
     store.togglePrayer(today, prayerId)
     if (!wasDone) {
@@ -78,82 +97,226 @@ export function Dashboard() {
 
   const topHabits = HABITS.filter(h => !h.isPrayer).slice(0, 3)
 
+  const totalHabits = HABITS.filter(h => !h.isPrayer).length
+  const doneHabits = dayRecord
+    ? HABITS.filter(h => !h.isPrayer && dayRecord.habits[h.id]).length
+    : 0
+  const habitPercent = totalHabits > 0 ? (doneHabits / totalHabits) * 100 : 0
+
+  const streakLabel = mainStreak === 1 ? 'день' : mainStreak < 5 ? 'дня' : 'дней'
+
+  const now = new Date()
+  const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  const dateStr = formatDateRussian(now)
+
   return (
-    <div className="p-4 pb-20 space-y-6">
-      <div>
-        <h1 className="font-heading text-2xl text-gold">Ассалому алайкум, Дониёр</h1>
-        <p className="font-mono text-xs text-txt/50 mt-1">{formatDateRussian(new Date())}</p>
-      </div>
+    <motion.div
+      className="pb-24 space-y-5"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Hero Section */}
+      <motion.div
+        variants={sectionVariants}
+        className="ambient-mesh relative px-5 pt-8 pb-6 overflow-hidden"
+      >
+        {/* Top badges row */}
+        <div className="flex items-center justify-between mb-5">
+          <span className="text-micro text-ink-mute uppercase tracking-widest">
+            {timeStr} · {dateStr}
+          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-micro text-champagne font-mono">Ур.{levelInfo.level}</span>
+            <span className="text-micro text-sunray font-mono">🔥{mainStreak}</span>
+            <span className="text-micro text-gold font-mono">{xp} XP</span>
+          </div>
+        </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
+        {/* Greeting */}
+        <h1 className="text-hero text-gold leading-tight mb-3">
+          Ассалому алайкум,<br />Дониёр
+        </h1>
+
+        {/* Quote */}
+        <p className="font-heading italic text-sm text-gold/60 leading-relaxed max-w-xs">
+          {quoteOfDay}
+        </p>
+
+        {/* Ornament separator */}
+        <div className="separator-ornament mt-4">◆</div>
+      </motion.div>
+
+      {/* Path Progress */}
+      <motion.div variants={sectionVariants} className="px-5">
         <div className="flex justify-between items-center mb-2">
-          <span className="font-mono text-xs text-txt/60">Путь до Ташкента</span>
-          <span className="font-mono text-xs text-gold">{percent.toFixed(1)}%</span>
+          <span className="text-micro text-ink-mute uppercase tracking-wider">Путь до Ташкента</span>
+          <span className="text-micro text-gold font-mono">{percent.toFixed(1)}%</span>
         </div>
-        <div className="h-2 bg-navy-3 rounded-full overflow-hidden">
-          <div className="h-full bg-gold rounded-full transition-all duration-700" style={{ width: `${percent}%` }} />
+        <div className="h-[3px] bg-dusk rounded-full overflow-hidden">
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: 'linear-gradient(90deg, var(--color-gold), var(--color-sunray))' }}
+            initial={{ width: 0 }}
+            animate={{ width: `${percent}%` }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
+          />
         </div>
-        <p className="font-mono text-[11px] text-txt/40 mt-2">Осталось {daysLeft} дней до 31 октября</p>
-      </div>
+        <p className="text-micro text-ink-mute mt-1.5">{daysLeft} дней осталось</p>
+      </motion.div>
 
-      <p className="font-heading text-sm text-txt/60 italic leading-relaxed px-2">{quoteOfDay}</p>
+      {/* Next Prayer Hero Card */}
+      {nextPrayer && (
+        <motion.div variants={sectionVariants} className="px-5">
+          <div className="bg-dusk glow-soft rounded-2xl p-5">
+            <p className="text-micro text-ink-mute uppercase tracking-wider mb-1">Следующий намаз</p>
+            <h2 className="text-h2 text-txt mb-1">{nextPrayer.label}</h2>
+            <div className="text-gold-hi font-mono text-[40px] leading-none tabular-nums font-light mb-2">
+              {nextPrayer.timeStr}
+            </div>
+            <p className="text-micro text-ink-mute">через {countdown}</p>
+            <div className="mt-4 h-[3px] bg-night rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gold/50"
+                style={{ width: '40%' }}
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
 
-      <div>
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="font-heading text-lg text-txt">Намазы</h2>
-          {nextPrayer && (
-            <span className="font-mono text-xs text-gold">{nextPrayer.label} через {countdown}</span>
+      {/* Prayers Horizontal Scroll */}
+      <motion.div variants={sectionVariants} className="px-5">
+        <p className="text-micro text-ink-mute uppercase tracking-wider mb-3">Намазы сегодня</p>
+        <div
+          className="flex gap-2 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {prayers.map((p) => {
+            const isDone = dayRecord?.prayers[p.name] ?? false
+            return (
+              <button
+                key={p.name}
+                onClick={() => handlePrayerToggle(p.name)}
+                className={[
+                  'flex-shrink-0 min-w-[80px] rounded-xl px-3 py-3 text-center transition-all duration-200',
+                  isDone
+                    ? 'bg-sacred/20 border border-sacred/40'
+                    : p.isActive
+                    ? 'bg-dusk border border-gold/50 shadow-[0_0_12px_rgba(var(--color-gold-rgb),0.25)]'
+                    : 'bg-dusk border border-twilight',
+                ].join(' ')}
+              >
+                <div className={`text-micro font-mono uppercase tracking-wide mb-1 ${isDone ? 'text-sacred' : p.isActive ? 'text-gold' : 'text-ink-mute'}`}>
+                  {p.label}
+                </div>
+                <div className={`font-mono text-xs tabular-nums ${isDone ? 'text-sacred/80' : p.isActive ? 'text-gold-hi' : 'text-txt/60'}`}>
+                  {p.timeStr}
+                </div>
+                {isDone && (
+                  <div className="text-sacred text-[10px] mt-1">✓</div>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </motion.div>
+
+      {/* Habits Summary */}
+      <motion.div variants={sectionVariants} className="px-5">
+        <div className="bg-dusk rounded-2xl p-5 space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-h2 text-txt">Сегодня</h2>
+            <span className="text-micro text-gold font-mono">{doneHabits} из {totalHabits}</span>
+          </div>
+
+          {/* Habit progress bar */}
+          <div className="h-[3px] bg-night rounded-full overflow-hidden">
+            <motion.div
+              className="h-full rounded-full bg-gold"
+              initial={{ width: 0 }}
+              animate={{ width: `${habitPercent}%` }}
+              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.5 }}
+            />
+          </div>
+
+          {/* Top habits */}
+          <div className="space-y-2.5">
+            {topHabits.map(h => {
+              const done = dayRecord?.habits[h.id] ?? false
+              return (
+                <div key={h.id} className="flex items-center gap-3">
+                  <span className={`text-sm font-mono w-4 text-center ${done ? 'text-sacred' : 'text-ink-mute'}`}>
+                    {done ? '✓' : '○'}
+                  </span>
+                  <span className={`font-mono text-sm ${done ? 'text-ink-mute line-through' : 'text-txt'}`}>
+                    {h.label}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Streak + XP footer */}
+          <div className="flex justify-between items-center pt-3 border-t border-twilight/50">
+            <span className="text-micro text-ink-mute font-mono">
+              🔥 {mainStreak} {streakLabel} подряд
+            </span>
+            <span className="text-micro text-gold font-mono">+{todayPoints} XP сегодня</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Health Summary */}
+      <motion.div variants={sectionVariants} className="px-5">
+        <div className="bg-dusk rounded-2xl p-5 space-y-3">
+          <h2 className="text-h2 text-txt">Здоровье</h2>
+
+          <div className="flex gap-4 flex-wrap">
+            {/* Weight */}
+            <div className="flex flex-col gap-0.5">
+              <span className="text-micro text-ink-mute uppercase tracking-wider">Вес</span>
+              <div className="flex items-baseline gap-1">
+                <span className="font-mono text-sm text-txt">
+                  {latestWeight ? `${latestWeight.weight} кг` : '—'}
+                </span>
+                {weightDiff !== 0 && (
+                  <span className={`text-micro font-mono ${weightDiff < 0 ? 'text-sacred' : 'text-danger'}`}>
+                    {weightDiff > 0 ? '↑' : '↓'}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Sleep */}
+            <div className="flex flex-col gap-0.5">
+              <span className="text-micro text-ink-mute uppercase tracking-wider">Сон</span>
+              <span className="font-mono text-sm text-txt">{sleepHours ?? '—'}</span>
+            </div>
+
+            {/* Symptoms */}
+            {sympImproved > 0 && (
+              <div className="flex flex-col gap-0.5">
+                <span className="text-micro text-ink-mute uppercase tracking-wider">Симптомы</span>
+                <span className="font-mono text-sm text-sacred">{sympImproved}/7 ↓</span>
+              </div>
+            )}
+          </div>
+
+          {/* Upcoming doctor visit */}
+          {upcomingVisit && (
+            <div className="mt-1 pt-3 border-t border-twilight/50">
+              <span className="text-micro text-ink-mute uppercase tracking-wider block mb-1">Визит к врачу</span>
+              <p className="font-mono text-xs text-calm leading-relaxed">
+                {upcomingVisit.date}
+                {upcomingVisit.time && ` · ${upcomingVisit.time}`}
+                {' · '}{upcomingVisit.specialist}
+                {upcomingVisit.clinic && `, ${upcomingVisit.clinic}`}
+              </p>
+            </div>
           )}
         </div>
-        <div className="space-y-2">
-          {prayers.map((p) => (
-            <PrayerCard key={p.name} name={p.name} label={p.label} time={p.timeStr}
-              isActive={p.isActive} isDone={dayRecord?.prayers[p.name] ?? false}
-              onToggle={() => handlePrayerToggle(p.name)} />
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3 space-y-3">
-        <h2 className="font-heading text-lg text-txt">Сегодня</h2>
-        {topHabits.map(h => {
-          const done = dayRecord?.habits[h.id] ?? false
-          return (
-            <div key={h.id} className="flex items-center gap-2 font-mono text-sm">
-              <span className={done ? 'text-accent-green' : 'text-txt/40'}>{done ? '✓' : '○'}</span>
-              <span className={done ? 'text-txt/50' : 'text-txt'}>{h.label}</span>
-            </div>
-          )
-        })}
-        <div className="flex justify-between items-center pt-2 border-t border-navy-3">
-          <span className="font-mono text-sm text-txt/60">
-            🔥 {mainStreak} {mainStreak === 1 ? 'день' : mainStreak < 5 ? 'дня' : 'дней'} подряд
-          </span>
-          <span className="font-mono text-sm text-gold">+{todayPoints} XP</span>
-        </div>
-      </div>
-
-      {/* Health summary block */}
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3 space-y-2">
-        <h2 className="font-heading text-lg text-txt flex items-center gap-2">♥ Здоровье</h2>
-        <div className="flex gap-4 font-mono text-sm text-txt/80">
-          <span>Вес: {latestWeight ? latestWeight.weight : '—'}
-            {weightDiff !== 0 && (
-              <span className={weightDiff < 0 ? 'text-accent-green' : 'text-accent-red'}>
-                {' '}{weightDiff > 0 ? '↑' : '↓'}
-              </span>
-            )}
-          </span>
-          <span>Сон: {sleepHours ?? '—'}</span>
-          {sympImproved > 0 && <span>Симпт: {sympImproved}/7 ↓</span>}
-        </div>
-        {upcomingVisit && (
-          <p className="font-mono text-xs text-accent-blue">
-            📅 {upcomingVisit.date} {upcomingVisit.time} — {upcomingVisit.specialist}
-            {upcomingVisit.clinic && `, ${upcomingVisit.clinic}`}
-          </p>
-        )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

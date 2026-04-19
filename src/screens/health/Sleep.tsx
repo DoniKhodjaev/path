@@ -44,38 +44,38 @@ export function Sleep() {
     return cells
   }, [health.sleepEntries])
 
-  const inputCls = "w-full bg-navy-3 rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-navy-3 focus:border-gold/50"
+  const inputCls = "w-full bg-dusk rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-dusk focus:border-gold/30"
 
   return (
     <div className="space-y-6">
-      <h2 className="font-heading text-xl text-txt">Сон</h2>
+      <h2 className="text-h1 text-gold">Сон</h2>
 
       {/* Add entry */}
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3 space-y-3">
-        <p className="font-mono text-xs text-txt/60 uppercase tracking-wider">Записать сон</p>
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk space-y-3">
+        <p className="font-mono text-xs text-ink-mute uppercase tracking-wider">Записать сон</p>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="font-mono text-[10px] text-txt/40 block mb-1">Отбой</label>
+            <label className="font-mono text-[10px] text-ink-mute block mb-1">Отбой</label>
             <input type="time" value={form.bedtime} onChange={e => setForm({...form, bedtime: e.target.value})} className={inputCls} />
           </div>
           <div>
-            <label className="font-mono text-[10px] text-txt/40 block mb-1">Подъём</label>
+            <label className="font-mono text-[10px] text-ink-mute block mb-1">Подъём</label>
             <input type="time" value={form.wakeTime} onChange={e => setForm({...form, wakeTime: e.target.value})} className={inputCls} />
           </div>
         </div>
         <div>
           <div className="flex justify-between">
-            <label className="font-mono text-[10px] text-txt/40">Качество сна</label>
+            <label className="font-mono text-[10px] text-ink-mute">Качество сна</label>
             <span className="font-mono text-sm text-gold">{form.quality}/10</span>
           </div>
           <input type="range" min="1" max="10" value={form.quality}
             onChange={e => setForm({...form, quality: Number(e.target.value)})}
-            className="w-full h-1 bg-navy-3 rounded-full appearance-none cursor-pointer
+            className="w-full h-1 bg-dusk rounded-full appearance-none cursor-pointer
               [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gold" />
         </div>
         <div>
-          <label className="font-mono text-[10px] text-txt/40 block mb-1">Пробуждения ночью</label>
+          <label className="font-mono text-[10px] text-ink-mute block mb-1">Пробуждения ночью</label>
           <input type="number" min="0" value={form.awakenings}
             onChange={e => setForm({...form, awakenings: Number(e.target.value)})} className={inputCls} />
         </div>
@@ -83,23 +83,23 @@ export function Sleep() {
       </div>
 
       {/* Calendar */}
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <p className="font-mono text-xs text-txt/60 uppercase tracking-wider mb-3">
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <p className="font-mono text-xs text-ink-mute uppercase tracking-wider mb-3">
           {new Date().toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
         </p>
         <div className="grid grid-cols-7 gap-1 mb-1">
           {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(d => (
-            <span key={d} className="font-mono text-[9px] text-txt/30 text-center">{d}</span>
+            <span key={d} className="font-mono text-[9px] text-ink-mute text-center">{d}</span>
           ))}
         </div>
         <div className="grid grid-cols-7 gap-1">
           {calendarData.map((cell, i) => (
             <div key={i} className={`aspect-square rounded-sm flex items-center justify-center font-mono text-[10px] ${
               cell.day === 0 ? '' :
-              cell.quality === null ? 'bg-navy-3/30 text-txt/20' :
-              cell.quality >= 7 ? 'bg-accent-green/30 text-accent-green' :
+              cell.quality === null ? 'bg-dusk/30 text-ink-mute' :
+              cell.quality >= 7 ? 'bg-sacred/30 text-sacred' :
               cell.quality >= 4 ? 'bg-gold/20 text-gold' :
-              'bg-accent-red/20 text-accent-red'
+              'bg-danger/20 text-danger'
             }`}>
               {cell.day > 0 ? cell.day : ''}
             </div>
@@ -109,8 +109,8 @@ export function Sleep() {
 
       {/* Duration chart */}
       {chartData.length > 1 && (
-        <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-          <p className="font-mono text-xs text-txt/60 uppercase tracking-wider mb-3">Длительность сна</p>
+        <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+          <p className="font-mono text-xs text-ink-mute uppercase tracking-wider mb-3">Длительность сна</p>
           <ResponsiveContainer width="100%" height={150}>
             <BarChart data={chartData}>
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#8a8a8a' }} />

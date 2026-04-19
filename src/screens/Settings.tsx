@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { useStore } from '../store/useStore'
 import { useNotifications } from '../hooks/useNotifications'
 import { CITIES } from '../utils/constants'
@@ -57,55 +58,55 @@ export function Settings() {
   }
 
   return (
-    <div className="p-4 pb-20 space-y-6">
-      <h1 className="font-heading text-2xl text-gold">Настройки</h1>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="p-4 pb-20 space-y-6">
+      <h1 className="text-h1 text-gold">Настройки</h1>
 
       {/* Sub-screen links */}
       <div className="grid grid-cols-2 gap-3">
         <button onClick={() => setSub('levels')}
-          className="bg-navy-2 rounded-xl p-4 border border-navy-3 hover:border-gold/20 transition-colors text-left">
+          className="bg-twilight rounded-2xl p-4 border border-dusk hover:border-gold/20 transition-colors text-left">
           <span className="text-2xl">⭐</span>
           <p className="font-mono text-sm text-txt mt-2">Уровни и награды</p>
         </button>
         <button onClick={() => setSub('plan')}
-          className="bg-navy-2 rounded-xl p-4 border border-navy-3 hover:border-gold/20 transition-colors text-left">
+          className="bg-twilight rounded-2xl p-4 border border-dusk hover:border-gold/20 transition-colors text-left">
           <span className="text-2xl">📋</span>
           <p className="font-mono text-sm text-txt mt-2">Мой план</p>
         </button>
       </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <label className="font-mono text-xs text-txt/60 block mb-2">Город</label>
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <label className="font-mono text-xs text-ink-mute block mb-2">Город</label>
         <select value={store.city} onChange={handleCityChange}
-          className="w-full bg-navy-3 rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-navy-3 focus:border-gold/50">
+          className="w-full bg-dusk rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-dusk focus:border-gold/30">
           {CITIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
         </select>
       </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <label className="font-mono text-xs text-txt/60 block mb-2">Метод расчёта намазов</label>
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <label className="font-mono text-xs text-ink-mute block mb-2">Метод расчёта намазов</label>
         <select value={store.calculationMethod} onChange={e => store.setCalculationMethod(e.target.value)}
-          className="w-full bg-navy-3 rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-navy-3 focus:border-gold/50">
+          className="w-full bg-dusk rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-dusk focus:border-gold/30">
           {CALC_METHODS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
         </select>
       </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <label className="font-mono text-xs text-txt/60 block mb-2">Курс доллара (₽)</label>
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <label className="font-mono text-xs text-ink-mute block mb-2">Курс доллара (₽)</label>
         <input type="number" value={store.exchangeRate}
           onChange={e => store.setExchangeRate(Number(e.target.value) || 85)}
-          className="w-full bg-navy-3 rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-navy-3 focus:border-gold/50" />
+          className="w-full bg-dusk rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-dusk focus:border-gold/30" />
       </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <label className="font-mono text-xs text-txt/60 block mb-3">Push-уведомления</label>
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <label className="font-mono text-xs text-ink-mute block mb-3">Push-уведомления</label>
         <div className="space-y-3">
           {notifOptions.map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
               <span className="font-mono text-sm text-txt">{label}</span>
               <button onClick={() => handleNotificationToggle(key)}
                 className={`w-11 h-6 rounded-full transition-colors relative ${
-                  notificationSettings[key] ? 'bg-gold' : 'bg-navy-3'
+                  notificationSettings[key] ? 'bg-gold' : 'bg-dusk'
                 }`}>
                 <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform ${
                   notificationSettings[key] ? 'translate-x-5.5' : 'translate-x-0.5'
@@ -116,27 +117,27 @@ export function Settings() {
         </div>
       </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-accent-red/20">
+      <div className="bg-twilight rounded-2xl p-4 border border-danger/20">
         {showReset ? (
           <div className="space-y-3">
-            <p className="font-mono text-sm text-accent-red">Вы уверены? Все данные будут удалены.</p>
+            <p className="font-mono text-sm text-danger">Вы уверены? Все данные будут удалены.</p>
             <div className="flex gap-2">
               <button onClick={() => { store.resetAll(); setShowReset(false) }}
-                className="flex-1 py-2 bg-accent-red/20 text-accent-red font-mono text-sm rounded">Да, сбросить</button>
+                className="flex-1 py-2 bg-danger/20 text-danger font-mono text-sm rounded">Да, сбросить</button>
               <button onClick={() => setShowReset(false)}
-                className="flex-1 py-2 bg-navy-3 text-txt font-mono text-sm rounded">Отмена</button>
+                className="flex-1 py-2 bg-dusk text-txt font-mono text-sm rounded">Отмена</button>
             </div>
           </div>
         ) : (
           <button onClick={() => setShowReset(true)}
-            className="w-full font-mono text-sm text-accent-red/60 hover:text-accent-red">Сбросить все данные</button>
+            className="w-full font-mono text-sm text-danger/60 hover:text-danger">Сбросить все данные</button>
         )}
       </div>
 
-      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3">
-        <p className="font-mono text-xs text-txt/40">Путь 2026 v1.0.0</p>
-        <p className="font-mono text-xs text-txt/30 mt-1">Персональный трекер целей Дониёра</p>
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <p className="font-mono text-xs text-ink-mute">Путь 2026 v1.0.0</p>
+        <p className="font-mono text-xs text-ink-mute mt-1">Персональный трекер целей Дониёра</p>
       </div>
-    </div>
+    </motion.div>
   )
 }

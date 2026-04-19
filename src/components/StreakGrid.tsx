@@ -18,10 +18,10 @@ export function StreakGrid({ days }: Props) {
           <div key={date} className="flex flex-col items-center gap-1">
             <div
               className={`w-8 h-8 rounded-sm transition-colors ${
-                done ? 'bg-accent-green' : 'bg-navy-3/60'
+                done ? 'bg-sacred' : 'bg-dusk/60'
               }`}
             />
-            <span className="text-[10px] font-mono text-txt/40">{dayLabel}</span>
+            <span className="text-[10px] font-mono text-ink-mute">{dayLabel}</span>
           </div>
         )
       })}
