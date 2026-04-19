@@ -113,8 +113,8 @@ export function Dashboard() {
           fontSize: '10px',
           letterSpacing: '2px',
           color: 'var(--text-ghost)',
-          marginBottom: '28px',
-          paddingTop: '8px',
+          marginBottom: '14px',
+          paddingTop: '4px',
         }}>
           <span>{dateStr}</span>
           <span style={{ color: '#c9a84c' }}>УР. {levelInfo.level} · {xp} XP</span>
@@ -126,11 +126,11 @@ export function Dashboard() {
         <h1 style={{
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontWeight: 300,
-          fontSize: '44px',
+          fontSize: '36px',
           lineHeight: 1.05,
           letterSpacing: '-1.2px',
           color: 'var(--text-primary)',
-          margin: '0 0 16px',
+          margin: '0 0 8px',
         }}>
           Ассалому алайкум,<br />
           <span style={{ color: 'var(--gold-text)', fontStyle: 'italic' }}>Дониёр</span>
@@ -140,8 +140,8 @@ export function Dashboard() {
         <p style={{
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
-          fontSize: '15px',
-          lineHeight: 1.55,
+          fontSize: '13px',
+          lineHeight: 1.45,
           color: 'var(--text-faint)',
           margin: 0,
           maxWidth: '280px',
@@ -153,7 +153,7 @@ export function Dashboard() {
           fontSize: '9px',
           letterSpacing: '2px',
           color: 'var(--text-ghost)',
-          margin: '6px 0 0',
+          margin: '4px 0 0',
         }}>
           — {quoteSource}
         </p>
@@ -163,18 +163,18 @@ export function Dashboard() {
           width: '50px',
           height: '1px',
           background: 'rgba(201,168,76,0.3)',
-          margin: '14px 0',
+          margin: '10px 0',
         }} />
       </motion.div>
 
       {/* Path Progress */}
-      <motion.div variants={sectionVariants} style={{ marginBottom: '24px' }}>
+      <motion.div variants={sectionVariants} style={{ marginBottom: '14px' }}>
         <div style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: '9px',
           letterSpacing: '2.5px',
           color: 'var(--gold-text-label)',
-          marginBottom: '10px',
+          marginBottom: '6px',
         }}>
           ПУТЬ ДО ТАШКЕНТА
         </div>
@@ -216,7 +216,7 @@ export function Dashboard() {
             fontSize: '9px',
             letterSpacing: '2.5px',
             color: 'var(--gold-text-label)',
-            marginBottom: '12px',
+            marginBottom: '8px',
           }}>
             СЛЕДУЮЩИЙ НАМАЗ · ЧЕРЕЗ {countdown.toUpperCase()}
           </div>
@@ -224,7 +224,7 @@ export function Dashboard() {
             background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))',
             border: '1px solid rgba(201,168,76,0.18)',
             borderRadius: 16,
-            padding: '16px 20px',
+            padding: '14px 18px',
             position: 'relative',
             overflow: 'hidden',
           }}>
@@ -264,7 +264,7 @@ export function Dashboard() {
 
       {/* Prayer Row - 5 pills */}
       <motion.div variants={sectionVariants}>
-        <div style={{ marginTop: '16px', display: 'flex', gap: '6px' }}>
+        <div style={{ marginTop: '10px', display: 'flex', gap: '6px' }}>
           {prayers.map((p) => {
             const isDone = dayRecord?.prayers[p.name] ?? false
             const isPast = !p.isActive && !p.isNext && p.time < now
