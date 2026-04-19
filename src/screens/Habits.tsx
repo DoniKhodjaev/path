@@ -291,6 +291,7 @@ export function Habits() {
       <div style={{
         flex: 1,
         overflowY: 'auto',
+        overflowX: 'hidden',
         marginRight: -4,
         paddingRight: 4,
         paddingBottom: 16,

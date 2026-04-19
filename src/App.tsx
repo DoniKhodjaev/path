@@ -24,8 +24,8 @@ function App() {
   const ScreenComponent = screenComponents[screen]
 
   return (
-    <div className="min-h-dvh bg-night text-txt">
-      <main className="max-w-lg mx-auto">
+    <div className="min-h-dvh bg-night text-txt" style={{ overflowX: 'hidden' }}>
+      <main className="max-w-lg mx-auto" style={{ overflowX: 'hidden' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={screen}
