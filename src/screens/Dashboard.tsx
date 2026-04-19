@@ -223,41 +223,39 @@ export function Dashboard() {
           <div style={{
             background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))',
             border: '1px solid rgba(201,168,76,0.18)',
-            borderRadius: '20px',
-            padding: '28px 24px',
+            borderRadius: 16,
+            padding: '16px 20px',
             position: 'relative',
             overflow: 'hidden',
           }}>
-            {/* Radial glow */}
             <div style={{
               position: 'absolute',
-              top: '-40px',
-              right: '-40px',
-              width: '140px',
-              height: '140px',
+              top: -30,
+              right: -30,
+              width: 100,
+              height: 100,
               borderRadius: '50%',
               background: 'radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%)',
             }} />
-            <div style={{ position: 'relative' }}>
-              <div style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: '22px',
-                fontWeight: 400,
-                color: 'var(--text-primary)',
-                marginBottom: '2px',
-                letterSpacing: '-0.3px',
-              }}>
-                {nextPrayer.label}
-              </div>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: 12 }}>
               <div style={{
                 fontFamily: "'JetBrains Mono', monospace",
                 fontWeight: 300,
-                fontSize: '56px',
+                fontSize: 36,
                 color: 'var(--gold-text)',
-                letterSpacing: '-2.5px',
+                letterSpacing: -2,
                 lineHeight: 1,
               }}>
                 {nextPrayer.timeStr}
+              </div>
+              <div style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 18,
+                fontWeight: 400,
+                color: 'var(--text-primary)',
+                letterSpacing: -0.3,
+              }}>
+                {nextPrayer.label}
               </div>
             </div>
           </div>
