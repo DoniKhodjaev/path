@@ -3,7 +3,7 @@ import { BottomNav } from './components/BottomNav'
 import { Dashboard } from './screens/Dashboard'
 import { Habits } from './screens/Habits'
 import { Finance } from './screens/Finance'
-import { Levels } from './screens/Levels'
+import { Health } from './screens/Health'
 import { Settings } from './screens/Settings'
 import type { Screen } from './types'
 
@@ -16,7 +16,7 @@ function App() {
         {screen === 'dashboard' && <Dashboard />}
         {screen === 'habits' && <Habits />}
         {screen === 'finance' && <Finance />}
-        {screen === 'levels' && <Levels />}
+        {screen === 'health' && <Health />}
         {screen === 'settings' && <Settings />}
       </main>
       <BottomNav active={screen} onChange={setScreen} />

@@ -4,7 +4,7 @@ const TABS: { screen: Screen; label: string; icon: string }[] = [
   { screen: 'dashboard', label: 'Главная', icon: '⬡' },
   { screen: 'habits', label: 'Привычки', icon: '✓' },
   { screen: 'finance', label: 'Финансы', icon: '$' },
-  { screen: 'levels', label: 'Уровни', icon: '★' },
+  { screen: 'health', label: 'Здоровье', icon: '♥' },
   { screen: 'settings', label: 'Настройки', icon: '⚙' },
 ]
 
