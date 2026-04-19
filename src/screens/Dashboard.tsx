@@ -134,17 +134,18 @@ export function Dashboard() {
         </div>
 
         {/* Greeting */}
-        <h1 className="text-hero text-gold leading-tight mb-3">
-          Ассалому алайкум,<br />Дониёр
+        <h1 className="text-hero text-ink leading-tight mb-3" style={{ fontSize: '44px', letterSpacing: '-1.2px' }}>
+          Ассалому<br />алайкум,<br /><span className="italic text-gold-hi">Дониёр</span>
         </h1>
 
         {/* Quote */}
-        <p className="font-heading italic text-sm text-gold/60 leading-relaxed max-w-xs">
-          {quoteOfDay}
+        <p className="font-heading italic text-[15px] leading-relaxed max-w-xs" style={{ color: 'rgba(255,255,255,0.42)' }}>
+          «{quoteOfDay}»
         </p>
+        <p className="text-nano text-ink-mute mt-2">— ХАДИС</p>
 
         {/* Ornament separator */}
-        <div className="separator-ornament mt-4">◆</div>
+        <div className="separator-ornament mt-5">◆</div>
       </motion.div>
 
       {/* Path Progress */}
@@ -168,13 +169,19 @@ export function Dashboard() {
       {/* Next Prayer Hero Card */}
       {nextPrayer && (
         <motion.div variants={sectionVariants} className="px-5">
-          <div className="bg-dusk glow-soft rounded-2xl p-5">
-            <p className="text-micro text-ink-mute uppercase tracking-wider mb-1">Следующий намаз</p>
+          <div className="rounded-2xl p-6 relative overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))',
+              border: '1px solid rgba(201,168,76,0.18)',
+            }}>
+            {/* Radial glow */}
+            <div className="absolute top-0 right-0 w-[140px] h-[140px] rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.15), transparent 70%)' }} />
+            <p className="text-micro text-ink-mute uppercase tracking-wider mb-1">Следующий намаз · через {countdown}</p>
             <h2 className="text-h2 text-txt mb-1">{nextPrayer.label}</h2>
-            <div className="text-gold-hi font-mono text-[40px] leading-none tabular-nums font-light mb-2">
+            <div className="text-gold-hi font-mono text-[64px] leading-none tabular-nums font-light tracking-[-3px]">
               {nextPrayer.timeStr}
             </div>
-            <p className="text-micro text-ink-mute">через {countdown}</p>
             <div className="mt-4 h-[3px] bg-night rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full bg-gold/50"

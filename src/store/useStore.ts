@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AppState, DayRecord, NotificationSettings } from '../types'
+import type { AppState, DayRecord, NotificationSettings, ThemeMode } from '../types'
 
 const initialState = {
   city: 'Москва',
@@ -8,6 +8,7 @@ const initialState = {
   lon: 37.6173,
   calculationMethod: 'MuslimWorldLeague',
   exchangeRate: 85,
+  theme: 'dark' as ThemeMode,
   days: {} as Record<string, DayRecord>,
   deposits: {} as Record<string, boolean>,
   currentSaved: 0,
@@ -119,6 +120,7 @@ export const useStore = create<AppState>()(
       setCity: (city: string, lat: number, lon: number) => set({ city, lat, lon }),
       setCalculationMethod: (method: string) => set({ calculationMethod: method }),
       setExchangeRate: (rate: number) => set({ exchangeRate: rate }),
+      setTheme: (theme: ThemeMode) => set({ theme }),
       setNotificationSettings: (settings: Partial<NotificationSettings>) =>
         set((s) => ({
           notificationSettings: { ...s.notificationSettings, ...settings },

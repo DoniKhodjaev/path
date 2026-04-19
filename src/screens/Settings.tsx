@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Moon, Sun, CircleHalf } from '@phosphor-icons/react'
 import { useStore } from '../store/useStore'
 import { useNotifications } from '../hooks/useNotifications'
 import { CITIES } from '../utils/constants'
+import { hapticTap } from '../utils/haptic'
 import { Levels } from './Levels'
 import { Plan } from './Plan'
+import type { ThemeMode } from '../types'
 
 type SettingsSub = 'main' | 'levels' | 'plan'
 
@@ -75,6 +78,31 @@ export function Settings() {
         </button>
       </div>
 
+      {/* Theme selector */}
+      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
+        <label className="font-mono text-xs text-ink-mute block mb-3">Внешний вид</label>
+        <div className="grid grid-cols-3 gap-3">
+          {([
+            { mode: 'dark' as ThemeMode, label: 'Тёмная', Icon: Moon },
+            { mode: 'light' as ThemeMode, label: 'Светлая', Icon: Sun },
+            { mode: 'auto' as ThemeMode, label: 'Авто', Icon: CircleHalf },
+          ]).map(({ mode, label, Icon }) => {
+            const active = store.theme === mode
+            return (
+              <button key={mode} onClick={() => { hapticTap(); store.setTheme(mode) }}
+                className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all ${
+                  active
+                    ? 'border-gold bg-gold/5 text-gold'
+                    : 'border-dusk text-ink-mute opacity-60 hover:opacity-80'
+                }`}>
+                <Icon size={20} weight={active ? 'fill' : 'regular'} />
+                <span className="font-mono text-[10px] tracking-wide">{label}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
       <div className="bg-twilight rounded-2xl p-4 border border-dusk">
         <label className="font-mono text-xs text-ink-mute block mb-2">Город</label>
         <select value={store.city} onChange={handleCityChange}
@@ -134,9 +162,9 @@ export function Settings() {
         )}
       </div>
 
-      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
-        <p className="font-mono text-xs text-ink-mute">Путь 2026 v1.0.0</p>
-        <p className="font-mono text-xs text-ink-mute mt-1">Персональный трекер целей Дониёра</p>
+      <div className="text-center py-4 space-y-2">
+        <p className="font-heading italic text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>Путь 2026</p>
+        <p className="text-nano text-ink-mute tracking-widest">СОЗДАНО С НАМЕРЕНИЕМ</p>
       </div>
     </motion.div>
   )

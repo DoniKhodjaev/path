@@ -65,6 +65,10 @@ export const CATEGORY_LABELS: Record<string, string> = {
   islam: 'Ислам', health: 'Здоровье', development: 'Развитие', finance: 'Финансы', work: 'Работа',
 }
 
+export const CATEGORY_COLORS: Record<string, string> = {
+  islam: 'sacred', health: 'calm', development: 'gold', finance: 'gold', work: 'gold-hi',
+}
+
 export const DEPOSIT_MONTHS = [
   { month: '2026-04', label: 'Апрель', amount: 100000 },
   { month: '2026-05', label: 'Май', amount: 100000 },

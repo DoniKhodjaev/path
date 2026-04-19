@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTheme } from './hooks/useTheme'
 import { BottomNav } from './components/BottomNav'
 import { Dashboard } from './screens/Dashboard'
 import { Habits } from './screens/Habits'
@@ -17,6 +18,7 @@ const screenComponents: Record<Screen, React.ComponentType> = {
 }
 
 function App() {
+  useTheme()
   const [screen, setScreen] = useState<Screen>('dashboard')
 
   const ScreenComponent = screenComponents[screen]

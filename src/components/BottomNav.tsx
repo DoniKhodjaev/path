@@ -50,7 +50,7 @@ export function BottomNav({ active, onChange }: Props) {
               relative flex flex-col items-center justify-center gap-0.5
               min-w-[44px] min-h-[44px] px-3 py-1
               transition-colors duration-150
-              ${isActive ? 'text-gold' : 'text-ink-mute hover:text-ink'}
+              ${isActive ? 'text-gold-hi' : 'text-ink-mute hover:text-ink'}
             `}
           >
             <TabIcon
@@ -61,7 +61,8 @@ export function BottomNav({ active, onChange }: Props) {
               {label}
             </span>
             {isActive && (
-              <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gold" />
+              <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-gold-hi"
+                style={{ boxShadow: '0 0 8px rgba(232,201,106,0.6)' }} />
             )}
           </button>
         )

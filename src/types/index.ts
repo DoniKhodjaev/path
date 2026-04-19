@@ -40,6 +40,8 @@ export interface NotificationSettings {
   morning: boolean
 }
 
+export type ThemeMode = 'light' | 'dark' | 'auto'
+
 export interface AppState {
   // Profile
   city: string
@@ -47,6 +49,7 @@ export interface AppState {
   lon: number
   calculationMethod: string
   exchangeRate: number
+  theme: ThemeMode
 
   // Daily records keyed by "YYYY-MM-DD"
   days: Record<string, DayRecord>
@@ -77,6 +80,7 @@ export interface AppState {
   setCity: (city: string, lat: number, lon: number) => void
   setCalculationMethod: (method: string) => void
   setExchangeRate: (rate: number) => void
+  setTheme: (theme: ThemeMode) => void
   setNotificationSettings: (settings: Partial<NotificationSettings>) => void
   setPushSubscription: (sub: string | null) => void
   resetAll: () => void

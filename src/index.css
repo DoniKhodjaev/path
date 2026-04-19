@@ -43,6 +43,40 @@
   --font-arabic: "Amiri Quran", serif;
 }
 
+/* Light theme overrides */
+.light {
+  --color-abyss: #e8e3d7;
+  --color-night: #faf6ed;
+  --color-twilight: #ffffff;
+  --color-dusk: #f5efe0;
+  --color-horizon: #ebe4d0;
+  --color-navy: #faf6ed;
+  --color-navy-2: #ffffff;
+  --color-navy-3: #f5efe0;
+  --color-amber: #5c4410;
+  --color-gold: #8b6914;
+  --color-gold-hi: #a57f1d;
+  --color-gold-2: #a57f1d;
+  --color-sunray: #c9a84c;
+  --color-champagne: #5c4410;
+  --color-sacred: #2d7a52;
+  --color-calm: #2a5f9e;
+  --color-warning: #b85d1f;
+  --color-danger: #a13838;
+  --color-rose: #8a4949;
+  --color-accent-green: #2d7a52;
+  --color-accent-red: #a13838;
+  --color-accent-blue: #2a5f9e;
+  --color-ink: #2c2416;
+  --color-ink-mute: rgba(44,36,22,0.55);
+  --color-txt: #2c2416;
+}
+
+/* Theme transitions */
+*, *::before, *::after {
+  transition: background-color 250ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -221,6 +255,30 @@ html {
   background:
     radial-gradient(ellipse at 20% 0%, rgba(201, 168, 76, 0.06) 0%, transparent 60%),
     radial-gradient(ellipse at 80% 100%, rgba(90, 154, 224, 0.04) 0%, transparent 60%);
+}
+.light .ambient-mesh {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(139, 105, 20, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(42, 95, 158, 0.04) 0%, transparent 60%);
+}
+
+/* Light theme grain */
+.light body::before {
+  opacity: 0.03;
+}
+
+/* Light theme card shadows */
+.light .bg-twilight,
+.light .bg-dusk {
+  box-shadow: 0 1px 2px rgba(44,36,22,0.04), 0 4px 12px rgba(44,36,22,0.03);
+}
+
+/* Light theme glow adjustments */
+.light .glow-soft {
+  box-shadow: 0 4px 24px rgba(44, 36, 22, 0.08);
+}
+.light .glow-gold {
+  box-shadow: 0 0 40px rgba(139, 105, 20, 0.1);
 }
 
 /* Card variants */
