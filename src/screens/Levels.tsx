@@ -5,7 +5,7 @@ import { LEVELS } from '../utils/constants'
 export function Levels() {
   const { xp, badges } = useStore()
   const currentLevel = getLevelForXp(xp)
-  const { current, needed, progress } = getXpToNextLevel(xp)
+  const { progress } = getXpToNextLevel(xp)
 
   const nextLevel = LEVELS.find(l => l.level === currentLevel.level + 1)
   const xpToNext = nextLevel ? nextLevel.minXp - xp : 0

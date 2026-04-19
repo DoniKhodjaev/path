@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import { usePrayers } from '../hooks/usePrayers'
 import { useStore } from '../store/useStore'
-import { formatDateRussian, getPathProgress, todayStr } from '../utils/dates'
-import { QUOTES, HABITS, getAllHabits } from '../utils/constants'
+import { getPathProgress, todayStr } from '../utils/dates'
+import { QUOTES, getAllHabits } from '../utils/constants'
 import { useGamification } from '../hooks/useGamification'
 import { getLevelForXp } from '../utils/gamification'
 import { hapticTap } from '../utils/haptic'
@@ -46,15 +46,6 @@ export function Dashboard() {
   }, [quoteOfDay])
 
   const allHabits = useMemo(() => getAllHabits(store.customHabits), [store.customHabits])
-
-  const todayPoints = useMemo(() => {
-    if (!dayRecord) return 0
-    let pts = 0
-    allHabits.forEach(h => {
-      if (h.isPrayer ? dayRecord.prayers[h.id] : dayRecord.habits[h.id]) pts += 10
-    })
-    return pts
-  }, [dayRecord, allHabits])
 
   const mainStreak = store.streaks.main?.current ?? 0
   const xp = store.xp ?? 0

@@ -1,5 +1,4 @@
 import { useHealthStore } from '../../store/useHealthStore'
-import { todayStr } from '../../utils/dates'
 import { SYMPTOM_LIST } from '../../utils/healthConstants'
 import type { HealthSubScreen } from '../../types'
 
@@ -26,8 +25,6 @@ const NAV_ITEMS: {
 
 export function HealthDashboard({ onNavigate }: Props) {
   const health = useHealthStore()
-  const today = todayStr()
-
   // Latest weight
   const latestWeight = health.weightEntries.length > 0
     ? health.weightEntries[health.weightEntries.length - 1]
