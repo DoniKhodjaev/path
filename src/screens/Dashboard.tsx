@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { usePrayers } from '../hooks/usePrayers'
 import { useStore } from '../store/useStore'
+import { useHealthStore } from '../store/useHealthStore'
 import { PrayerCard } from '../components/PrayerCard'
 import { formatDateRussian, getPathProgress, todayStr } from '../utils/dates'
 import { QUOTES, HABITS } from '../utils/constants'
@@ -9,10 +10,43 @@ import { useGamification } from '../hooks/useGamification'
 export function Dashboard() {
   const { prayers, nextPrayer, countdown } = usePrayers()
   const store = useStore()
+  const health = useHealthStore()
   const { awardPoints, checkAndAwardBadges } = useGamification()
   const today = todayStr()
   const dayRecord = store.days[today]
   const { percent, daysLeft } = getPathProgress()
+
+  // Health summary data
+  const latestWeight = health.weightEntries.length > 0
+    ? health.weightEntries[health.weightEntries.length - 1] : null
+  const prevWeight = health.weightEntries.length > 1
+    ? health.weightEntries[health.weightEntries.length - 2] : null
+  const weightDiff = latestWeight && prevWeight ? latestWeight.weight - prevWeight.weight : 0
+
+  const latestSleep = health.sleepEntries.length > 0
+    ? health.sleepEntries[health.sleepEntries.length - 1] : null
+  const sleepHours = latestSleep ? (() => {
+    const [bh, bm] = latestSleep.bedtime.split(':').map(Number)
+    const [wh, wm] = latestSleep.wakeTime.split(':').map(Number)
+    let mins = (wh * 60 + wm) - (bh * 60 + bm)
+    if (mins < 0) mins += 24 * 60
+    return `${Math.floor(mins / 60)}ч`
+  })() : null
+
+  const upcomingVisit = health.doctorVisits
+    .filter(v => v.status === 'planned' && v.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))[0]
+
+  const sympImproved = (() => {
+    const sorted = [...health.symptoms].sort((a, b) => a.date.localeCompare(b.date))
+    if (sorted.length < 2) return 0
+    const first = sorted[0], latest = sorted[sorted.length - 1]
+    let count = 0
+    for (const key of Object.keys(latest.ratings)) {
+      if ((latest.ratings[key] ?? 0) < (first.ratings[key] ?? 0)) count++
+    }
+    return count
+  })()
 
   const quoteOfDay = useMemo(() => {
     const dayIndex = new Date().getDate() % QUOTES.length
@@ -97,6 +131,28 @@ export function Dashboard() {
           </span>
           <span className="font-mono text-sm text-gold">+{todayPoints} XP</span>
         </div>
+      </div>
+
+      {/* Health summary block */}
+      <div className="bg-navy-2 rounded-xl p-4 border border-navy-3 space-y-2">
+        <h2 className="font-heading text-lg text-txt flex items-center gap-2">♥ Здоровье</h2>
+        <div className="flex gap-4 font-mono text-sm text-txt/80">
+          <span>Вес: {latestWeight ? latestWeight.weight : '—'}
+            {weightDiff !== 0 && (
+              <span className={weightDiff < 0 ? 'text-accent-green' : 'text-accent-red'}>
+                {' '}{weightDiff > 0 ? '↑' : '↓'}
+              </span>
+            )}
+          </span>
+          <span>Сон: {sleepHours ?? '—'}</span>
+          {sympImproved > 0 && <span>Симпт: {sympImproved}/7 ↓</span>}
+        </div>
+        {upcomingVisit && (
+          <p className="font-mono text-xs text-accent-blue">
+            📅 {upcomingVisit.date} {upcomingVisit.time} — {upcomingVisit.specialist}
+            {upcomingVisit.clinic && `, ${upcomingVisit.clinic}`}
+          </p>
+        )}
       </div>
     </div>
   )
