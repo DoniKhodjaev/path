@@ -1,0 +1,11 @@
+name = "path2026-notifications"
+main = "push-worker.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "path2026-subscriptions"
+database_id = "YOUR_DB_ID"
+
+[triggers]
+crons = ["45 19 * * *", "0 3 * * *", "0 6 1 * *"]
