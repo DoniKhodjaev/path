@@ -1,8 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { usePrayers } from '../hooks/usePrayers'
 import { useStore } from '../store/useStore'
-import { useHealthStore } from '../store/useHealthStore'
 import { formatDateRussian, getPathProgress, todayStr } from '../utils/dates'
 import { QUOTES, HABITS } from '../utils/constants'
 import { useGamification } from '../hooks/useGamification'
@@ -26,48 +25,24 @@ const sectionVariants = {
 export function Dashboard() {
   const { prayers, nextPrayer, countdown } = usePrayers()
   const store = useStore()
-  const health = useHealthStore()
   const { awardPoints, checkAndAwardBadges } = useGamification()
   const today = todayStr()
   const dayRecord = store.days[today]
   const { percent, daysLeft } = getPathProgress()
 
-  // Health summary data
-  const latestWeight = health.weightEntries.length > 0
-    ? health.weightEntries[health.weightEntries.length - 1] : null
-  const prevWeight = health.weightEntries.length > 1
-    ? health.weightEntries[health.weightEntries.length - 2] : null
-  const weightDiff = latestWeight && prevWeight ? latestWeight.weight - prevWeight.weight : 0
-
-  const latestSleep = health.sleepEntries.length > 0
-    ? health.sleepEntries[health.sleepEntries.length - 1] : null
-  const sleepHours = latestSleep ? (() => {
-    const [bh, bm] = latestSleep.bedtime.split(':').map(Number)
-    const [wh, wm] = latestSleep.wakeTime.split(':').map(Number)
-    let mins = (wh * 60 + wm) - (bh * 60 + bm)
-    if (mins < 0) mins += 24 * 60
-    return `${Math.floor(mins / 60)}ч`
-  })() : null
-
-  const upcomingVisit = health.doctorVisits
-    .filter(v => v.status === 'planned' && v.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date))[0]
-
-  const sympImproved = (() => {
-    const sorted = [...health.symptoms].sort((a, b) => a.date.localeCompare(b.date))
-    if (sorted.length < 2) return 0
-    const first = sorted[0], latest = sorted[sorted.length - 1]
-    let count = 0
-    for (const key of Object.keys(latest.ratings)) {
-      if ((latest.ratings[key] ?? 0) < (first.ratings[key] ?? 0)) count++
-    }
-    return count
-  })()
-
   const quoteOfDay = useMemo(() => {
     const dayIndex = new Date().getDate() % QUOTES.length
     return QUOTES[dayIndex]
   }, [])
+
+  // Split quote into text and source
+  const { quoteText, quoteSource } = useMemo(() => {
+    const match = quoteOfDay.match(/^(«.*?»)\s*—\s*(.+)$/)
+    if (match) {
+      return { quoteText: match[1], quoteSource: match[2].toUpperCase() }
+    }
+    return { quoteText: quoteOfDay, quoteSource: 'ХАДИС' }
+  }, [quoteOfDay])
 
   const todayPoints = useMemo(() => {
     if (!dayRecord) return 0
@@ -95,133 +70,265 @@ export function Dashboard() {
     setTimeout(() => checkAndAwardBadges(), 100)
   }
 
-  const topHabits = HABITS.filter(h => !h.isPrayer).slice(0, 3)
-
-  const totalHabits = HABITS.filter(h => !h.isPrayer).length
+  const nonPrayerHabits = HABITS.filter(h => !h.isPrayer)
+  const totalHabits = nonPrayerHabits.length
   const doneHabits = dayRecord
-    ? HABITS.filter(h => !h.isPrayer && dayRecord.habits[h.id]).length
+    ? nonPrayerHabits.filter(h => dayRecord.habits[h.id]).length
     : 0
-  const habitPercent = totalHabits > 0 ? (doneHabits / totalHabits) * 100 : 0
+
+  const [habitsExpanded, setHabitsExpanded] = useState(false)
+  const visibleHabits = habitsExpanded ? nonPrayerHabits : nonPrayerHabits.slice(0, 3)
+  const hiddenCount = nonPrayerHabits.length - 3
 
   const streakLabel = mainStreak === 1 ? 'день' : mainStreak < 5 ? 'дня' : 'дней'
 
   const now = new Date()
-  const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  const dateStr = formatDateRussian(now)
+  // Format date as "ВОСКРЕСЕНЬЕ · 19 АПР"
+  const dayOfWeek = now.toLocaleDateString('ru-RU', { weekday: 'long' }).toUpperCase()
+  const dayNum = now.getDate()
+  const monthShort = now.toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '').toUpperCase()
+  const dateStr = `${dayOfWeek} · ${dayNum} ${monthShort}`
 
   return (
     <motion.div
-      className="pb-24 space-y-5"
+      className="pb-24"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Section */}
+      {/* Status Bar */}
       <motion.div
         variants={sectionVariants}
-        className="ambient-mesh relative px-5 pt-8 pb-6 overflow-hidden"
+        className="px-5 pt-8"
+        style={{ marginBottom: '48px' }}
       >
-        {/* Top badges row */}
-        <div className="flex items-center justify-between mb-5">
-          <span className="text-micro text-ink-mute uppercase tracking-widest">
-            {timeStr} · {dateStr}
+        <div className="flex items-center justify-between">
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '10px',
+            letterSpacing: '2px',
+            color: 'rgba(255,255,255,0.35)',
+          }}>
+            {dateStr}
           </span>
-          <div className="flex items-center gap-3">
-            <span className="text-micro text-champagne font-mono">Ур.{levelInfo.level}</span>
-            <span className="text-micro text-sunray font-mono">🔥{mainStreak}</span>
-            <span className="text-micro text-gold font-mono">{xp} XP</span>
-          </div>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '10px',
+            letterSpacing: '2px',
+            color: 'rgba(255,255,255,0.35)',
+          }}>
+            УР. {levelInfo.level} · {xp} XP
+          </span>
         </div>
+      </motion.div>
 
-        {/* Greeting */}
-        <h1 className="text-hero text-ink leading-tight mb-3" style={{ fontSize: '44px', letterSpacing: '-1.2px' }}>
-          Ассалому<br />алайкум,<br /><span className="italic text-gold-hi">Дониёр</span>
+      {/* Greeting */}
+      <motion.div variants={sectionVariants} className="px-5">
+        <h1 style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontWeight: 300,
+          fontSize: 'clamp(36px, 11vw, 44px)',
+          lineHeight: 1.05,
+          letterSpacing: '-1.2px',
+          color: 'var(--color-ink)',
+          margin: 0,
+          maxWidth: '100%',
+        }}>
+          Ассалому<br />
+          алайкум,<br />
+          <span style={{ color: '#e8c96a', fontStyle: 'italic' }}>Дониёр</span>
         </h1>
 
         {/* Quote */}
-        <p className="font-heading italic text-[15px] leading-relaxed max-w-xs" style={{ color: 'rgba(255,255,255,0.42)' }}>
-          «{quoteOfDay}»
+        <p style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontStyle: 'italic',
+          fontSize: '15px',
+          lineHeight: 1.55,
+          color: 'rgba(255,255,255,0.42)',
+          margin: '24px 0 0',
+          maxWidth: '280px',
+        }}>
+          {quoteText}
         </p>
-        <p className="text-nano text-ink-mute mt-2">— ХАДИС</p>
+        <p style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: '9px',
+          letterSpacing: '2px',
+          color: 'rgba(255,255,255,0.3)',
+          margin: '6px 0 0',
+        }}>
+          — {quoteSource}
+        </p>
 
-        {/* Ornament separator */}
-        <div className="separator-ornament mt-5">◆</div>
+        {/* Gold separator */}
+        <div style={{
+          width: '40px',
+          height: '1px',
+          background: 'rgba(201,168,76,0.3)',
+          margin: '40px 0',
+        }} />
       </motion.div>
 
       {/* Path Progress */}
       <motion.div variants={sectionVariants} className="px-5">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-micro text-ink-mute uppercase tracking-wider">Путь до Ташкента</span>
-          <span className="text-micro text-gold font-mono">{percent.toFixed(1)}%</span>
-        </div>
-        <div className="h-[3px] bg-dusk rounded-full overflow-hidden">
+        <p style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: '9px',
+          letterSpacing: '2.5px',
+          color: 'rgba(201,168,76,0.6)',
+          margin: '0 0 10px',
+          textTransform: 'uppercase',
+        }}>
+          ПУТЬ ДО ТАШКЕНТА
+        </p>
+        <div style={{
+          height: '2px',
+          background: 'rgba(255,255,255,0.06)',
+          borderRadius: '1px',
+          overflow: 'hidden',
+        }}>
           <motion.div
-            className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, var(--color-gold), var(--color-sunray))' }}
+            style={{
+              height: '100%',
+              borderRadius: '1px',
+              background: 'linear-gradient(90deg, var(--color-gold), var(--color-sunray))',
+            }}
             initial={{ width: 0 }}
             animate={{ width: `${percent}%` }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
           />
         </div>
-        <p className="text-micro text-ink-mute mt-1.5">{daysLeft} дней осталось</p>
+        <div className="flex justify-between" style={{ marginTop: '6px' }}>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '9px',
+            letterSpacing: '1px',
+            color: 'rgba(255,255,255,0.3)',
+          }}>
+            {daysLeft} дней осталось
+          </span>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '9px',
+            letterSpacing: '1px',
+            color: 'rgba(255,255,255,0.3)',
+          }}>
+            {percent.toFixed(1)}%
+          </span>
+        </div>
       </motion.div>
 
       {/* Next Prayer Hero Card */}
       {nextPrayer && (
-        <motion.div variants={sectionVariants} className="px-5">
-          <div className="rounded-2xl p-6 relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))',
-              border: '1px solid rgba(201,168,76,0.18)',
-            }}>
+        <motion.div variants={sectionVariants} className="px-5" style={{ marginTop: '40px' }}>
+          <p style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '9px',
+            letterSpacing: '2.5px',
+            color: 'rgba(201,168,76,0.6)',
+            margin: '0 0 12px',
+            textTransform: 'uppercase',
+          }}>
+            СЛЕДУЮЩИЙ НАМАЗ · ЧЕРЕЗ {countdown.toUpperCase()}
+          </p>
+          <div className="relative overflow-hidden" style={{
+            background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02))',
+            border: '1px solid rgba(201,168,76,0.18)',
+            borderRadius: '20px',
+            padding: '32px 24px',
+          }}>
             {/* Radial glow */}
-            <div className="absolute top-0 right-0 w-[140px] h-[140px] rounded-full pointer-events-none"
-              style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.15), transparent 70%)' }} />
-            <p className="text-micro text-ink-mute uppercase tracking-wider mb-1">Следующий намаз · через {countdown}</p>
-            <h2 className="text-h2 text-txt mb-1">{nextPrayer.label}</h2>
-            <div className="text-gold-hi font-mono text-[64px] leading-none tabular-nums font-light tracking-[-3px]">
-              {nextPrayer.timeStr}
-            </div>
-            <div className="mt-4 h-[3px] bg-night rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gold/50"
-                style={{ width: '40%' }}
-              />
+            <div className="absolute pointer-events-none" style={{
+              top: '-40px', right: '-40px', width: '140px', height: '140px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%)',
+            }} />
+            <div className="relative">
+              <div style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: '24px',
+                fontWeight: 400,
+                color: 'var(--color-txt)',
+                marginBottom: '2px',
+                letterSpacing: '-0.3px',
+              }}>
+                {nextPrayer.label}
+              </div>
+              <div style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: 300,
+                fontSize: '64px',
+                color: '#e8c96a',
+                letterSpacing: '-2.5px',
+                lineHeight: 1,
+              }}>
+                {nextPrayer.timeStr}
+              </div>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* Prayers Horizontal Scroll */}
-      <motion.div variants={sectionVariants} className="px-5">
-        <p className="text-micro text-ink-mute uppercase tracking-wider mb-3">Намазы сегодня</p>
-        <div
-          className="flex gap-2 overflow-x-auto pb-1"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
+      {/* Prayer Row - 5 pills */}
+      <motion.div variants={sectionVariants} className="px-5 mt-6">
+        <div className="flex" style={{ gap: '6px' }}>
           {prayers.map((p) => {
             const isDone = dayRecord?.prayers[p.name] ?? false
+            const isPast = !p.isActive && !p.isNext && p.time < now
             return (
               <button
                 key={p.name}
                 onClick={() => handlePrayerToggle(p.name)}
-                className={[
-                  'flex-shrink-0 min-w-[80px] rounded-xl px-3 py-3 text-center transition-all duration-200',
-                  isDone
-                    ? 'bg-sacred/20 border border-sacred/40'
-                    : p.isActive
-                    ? 'bg-dusk border border-gold/50 shadow-[0_0_12px_rgba(var(--color-gold-rgb),0.25)]'
-                    : 'bg-dusk border border-twilight',
-                ].join(' ')}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  padding: '10px 6px',
+                  textAlign: 'center',
+                  borderRadius: '10px',
+                  border: isDone
+                    ? '1px solid rgba(107,168,104,0.4)'
+                    : p.isActive || p.isNext
+                    ? '1px solid rgba(201,168,76,0.35)'
+                    : '1px solid rgba(255,255,255,0.08)',
+                  background: isDone
+                    ? 'rgba(107,168,104,0.1)'
+                    : p.isActive || p.isNext
+                    ? 'rgba(201,168,76,0.1)'
+                    : 'rgba(255,255,255,0.03)',
+                  opacity: isPast && !isDone ? 0.5 : 1,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
               >
-                <div className={`text-micro font-mono uppercase tracking-wide mb-1 ${isDone ? 'text-sacred' : p.isActive ? 'text-gold' : 'text-ink-mute'}`}>
+                <div style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '8px',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  marginBottom: '3px',
+                  color: isDone
+                    ? 'rgba(107,168,104,0.9)'
+                    : p.isActive || p.isNext
+                    ? 'rgba(201,168,76,0.8)'
+                    : 'rgba(255,255,255,0.35)',
+                }}>
                   {p.label}
                 </div>
-                <div className={`font-mono text-xs tabular-nums ${isDone ? 'text-sacred/80' : p.isActive ? 'text-gold-hi' : 'text-txt/60'}`}>
+                <div style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '12px',
+                  fontVariantNumeric: 'tabular-nums',
+                  color: isDone
+                    ? 'rgba(107,168,104,0.7)'
+                    : p.isActive || p.isNext
+                    ? '#e8c96a'
+                    : 'rgba(255,255,255,0.5)',
+                }}>
                   {p.timeStr}
                 </div>
                 {isDone && (
-                  <div className="text-sacred text-[10px] mt-1">✓</div>
+                  <div style={{ color: 'rgba(107,168,104,0.9)', fontSize: '10px', marginTop: '2px' }}>✓</div>
                 )}
               </button>
             )
@@ -229,101 +336,175 @@ export function Dashboard() {
         </div>
       </motion.div>
 
-      {/* Habits Summary */}
-      <motion.div variants={sectionVariants} className="px-5">
-        <div className="bg-dusk rounded-2xl p-5 space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-h2 text-txt">Сегодня</h2>
-            <span className="text-micro text-gold font-mono">{doneHabits} из {totalHabits}</span>
-          </div>
-
-          {/* Habit progress bar */}
-          <div className="h-[3px] bg-night rounded-full overflow-hidden">
-            <motion.div
-              className="h-full rounded-full bg-gold"
-              initial={{ width: 0 }}
-              animate={{ width: `${habitPercent}%` }}
-              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.5 }}
-            />
-          </div>
-
-          {/* Top habits */}
-          <div className="space-y-2.5">
-            {topHabits.map(h => {
-              const done = dayRecord?.habits[h.id] ?? false
-              return (
-                <div key={h.id} className="flex items-center gap-3">
-                  <span className={`text-sm font-mono w-4 text-center ${done ? 'text-sacred' : 'text-ink-mute'}`}>
-                    {done ? '✓' : '○'}
-                  </span>
-                  <span className={`font-mono text-sm ${done ? 'text-ink-mute line-through' : 'text-txt'}`}>
-                    {h.label}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Streak + XP footer */}
-          <div className="flex justify-between items-center pt-3 border-t border-twilight/50">
-            <span className="text-micro text-ink-mute font-mono">
-              🔥 {mainStreak} {streakLabel} подряд
+      {/* Habits "Сегодня" */}
+      <motion.div variants={sectionVariants} className="px-5" style={{ marginTop: '48px' }}>
+        {/* Title row */}
+        <div className="flex justify-between items-center" style={{ marginBottom: '6px' }}>
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontSize: '28px',
+            fontWeight: 400,
+            color: 'var(--color-ink)',
+            margin: 0,
+          }}>
+            Сегодня
+          </h2>
+          <div className="flex items-center" style={{ gap: '8px' }}>
+            {/* Streak dot */}
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: '#e08a3c',
+              boxShadow: '0 0 8px rgba(224,138,60,0.5)',
+            }} />
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '9px',
+              letterSpacing: '1px',
+              color: 'rgba(255,255,255,0.4)',
+            }}>
+              {mainStreak} {streakLabel}
             </span>
-            <span className="text-micro text-gold font-mono">+{todayPoints} XP сегодня</span>
           </div>
         </div>
-      </motion.div>
+        <p style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: '9px',
+          letterSpacing: '2px',
+          color: 'rgba(255,255,255,0.3)',
+          margin: '0 0 20px',
+          textTransform: 'uppercase',
+        }}>
+          {doneHabits} ИЗ {totalHabits} ВЫПОЛНЕНО
+        </p>
 
-      {/* Health Summary */}
-      <motion.div variants={sectionVariants} className="px-5">
-        <div className="bg-dusk rounded-2xl p-5 space-y-3">
-          <h2 className="text-h2 text-txt">Здоровье</h2>
-
-          <div className="flex gap-4 flex-wrap">
-            {/* Weight */}
-            <div className="flex flex-col gap-0.5">
-              <span className="text-micro text-ink-mute uppercase tracking-wider">Вес</span>
-              <div className="flex items-baseline gap-1">
-                <span className="font-mono text-sm text-txt">
-                  {latestWeight ? `${latestWeight.weight} кг` : '—'}
+        {/* Habit rows */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          {visibleHabits.map(h => {
+            const done = dayRecord?.habits[h.id] ?? false
+            return (
+              <button
+                key={h.id}
+                onClick={() => {
+                  hapticTap()
+                  store.toggleHabit(today, h.id)
+                  if (!done) {
+                    awardPoints(10)
+                    setTimeout(() => checkAndAwardBadges(), 100)
+                  }
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  width: '100%',
+                  padding: '10px 0',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                {/* Checkbox */}
+                <div style={{
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '6px',
+                  border: done
+                    ? '1.5px solid rgba(107,168,104,0.6)'
+                    : '1.5px solid rgba(255,255,255,0.15)',
+                  background: done
+                    ? 'rgba(107,168,104,0.15)'
+                    : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  transition: 'all 0.2s',
+                }}>
+                  {done && (
+                    <span style={{ color: 'rgba(107,168,104,0.9)', fontSize: '12px', lineHeight: 1 }}>✓</span>
+                  )}
+                </div>
+                {/* Label */}
+                <span style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '14px',
+                  color: done ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.8)',
+                  textDecoration: done ? 'line-through' : 'none',
+                  flex: 1,
+                  minWidth: 0,
+                }}>
+                  {h.label}
                 </span>
-                {weightDiff !== 0 && (
-                  <span className={`text-micro font-mono ${weightDiff < 0 ? 'text-sacred' : 'text-danger'}`}>
-                    {weightDiff > 0 ? '↑' : '↓'}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Sleep */}
-            <div className="flex flex-col gap-0.5">
-              <span className="text-micro text-ink-mute uppercase tracking-wider">Сон</span>
-              <span className="font-mono text-sm text-txt">{sleepHours ?? '—'}</span>
-            </div>
-
-            {/* Symptoms */}
-            {sympImproved > 0 && (
-              <div className="flex flex-col gap-0.5">
-                <span className="text-micro text-ink-mute uppercase tracking-wider">Симптомы</span>
-                <span className="font-mono text-sm text-sacred">{sympImproved}/7 ↓</span>
-              </div>
-            )}
-          </div>
-
-          {/* Upcoming doctor visit */}
-          {upcomingVisit && (
-            <div className="mt-1 pt-3 border-t border-twilight/50">
-              <span className="text-micro text-ink-mute uppercase tracking-wider block mb-1">Визит к врачу</span>
-              <p className="font-mono text-xs text-calm leading-relaxed">
-                {upcomingVisit.date}
-                {upcomingVisit.time && ` · ${upcomingVisit.time}`}
-                {' · '}{upcomingVisit.specialist}
-                {upcomingVisit.clinic && `, ${upcomingVisit.clinic}`}
-              </p>
-            </div>
-          )}
+                {/* Category label */}
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '10px',
+                  color: 'rgba(255,255,255,0.2)',
+                  letterSpacing: '0.5px',
+                  flexShrink: 0,
+                  textTransform: 'uppercase',
+                }}>
+                  {h.category === 'islam' ? 'ислам'
+                    : h.category === 'health' ? 'здоровье'
+                    : h.category === 'development' ? 'развитие'
+                    : h.category === 'finance' ? 'финансы'
+                    : 'работа'}
+                </span>
+              </button>
+            )
+          })}
         </div>
+
+        {/* Expand button */}
+        {!habitsExpanded && hiddenCount > 0 && (
+          <button
+            onClick={() => setHabitsExpanded(true)}
+            style={{
+              display: 'block',
+              width: '100%',
+              padding: '14px 0',
+              marginTop: '8px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '10px',
+              letterSpacing: '1.5px',
+              color: 'rgba(201,168,76,0.5)',
+              textTransform: 'uppercase',
+              textAlign: 'center',
+            }}
+          >
+            Показать ещё {hiddenCount} привычек
+          </button>
+        )}
+        {habitsExpanded && (
+          <button
+            onClick={() => setHabitsExpanded(false)}
+            style={{
+              display: 'block',
+              width: '100%',
+              padding: '14px 0',
+              marginTop: '8px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '10px',
+              letterSpacing: '1.5px',
+              color: 'rgba(201,168,76,0.5)',
+              textTransform: 'uppercase',
+              textAlign: 'center',
+            }}
+          >
+            Скрыть
+          </button>
+        )}
       </motion.div>
+
     </motion.div>
   )
 }

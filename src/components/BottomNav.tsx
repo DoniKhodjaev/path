@@ -54,8 +54,8 @@ export function BottomNav({ active, onChange }: Props) {
             `}
           >
             <TabIcon
-              size={24}
-              weight="duotone"
+              size={22}
+              weight="regular"
             />
             <span className="text-[10px] font-ui tracking-wide leading-none">
               {label}
