@@ -347,9 +347,8 @@ export function Habits() {
                   ...(isActivePrayer ? {
                     background: 'rgba(201,168,76,0.04)',
                     borderRadius: 8,
-                    margin: '0 -8px',
-                    paddingLeft: 12,
-                    paddingRight: 12,
+                    paddingLeft: 8,
+                    paddingRight: 8,
                   } : {}),
                 }
 
