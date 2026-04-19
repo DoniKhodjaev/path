@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AppState, DayRecord, NotificationSettings, ThemeMode } from '../types'
+import type { AppState, DayRecord, HabitDefinition, NotificationSettings, ThemeMode } from '../types'
 
 const initialState = {
   city: 'Москва',
@@ -27,6 +27,7 @@ const initialState = {
     morning: true,
   },
   pushSubscription: null as string | null,
+  customHabits: [] as HabitDefinition[],
 }
 
 function ensureDay(days: Record<string, DayRecord>, date: string): DayRecord {
@@ -40,6 +41,16 @@ export const useStore = create<AppState>()(
   persist(
     (set) => ({
       ...initialState,
+
+      addCustomHabit: (habit: HabitDefinition) =>
+        set((s) => ({
+          customHabits: [...s.customHabits, habit],
+        })),
+
+      removeCustomHabit: (id: string) =>
+        set((s) => ({
+          customHabits: s.customHabits.filter(h => h.id !== id),
+        })),
 
       toggleHabit: (date: string, habitId: string) =>
         set((s) => {

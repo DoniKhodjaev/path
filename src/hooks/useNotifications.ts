@@ -57,7 +57,7 @@ export function useNotifications() {
   const scheduleLocalNotification = useCallback((title: string, body: string, delayMs: number) => {
     if (!('Notification' in window) || Notification.permission !== 'granted') return
     setTimeout(() => {
-      new Notification(title, { body, icon: '/path2026/icons/icon-192.png' })
+      new Notification(title, { body, icon: '/path/icons/icon-192.png' })
     }, delayMs)
   }, [])
 

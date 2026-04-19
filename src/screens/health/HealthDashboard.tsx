@@ -7,20 +7,21 @@ interface Props {
   onNavigate: (screen: HealthSubScreen) => void
 }
 
-const SECTIONS: {
+const NAV_ITEMS: {
   letter: string
   title: string
   desc: string
   screen: HealthSubScreen
   color: string
   bg: string
+  border: string
 }[] = [
-  { letter: 'А', title: 'Анализы и врачи', desc: 'визиты · результаты · чеклист', screen: 'doctors', color: '#8ab8e0', bg: 'rgba(90,154,224,0.12)' },
-  { letter: 'С', title: 'Симптомы', desc: 'трекинг · динамика · заметки', screen: 'symptoms', color: '#e08a3c', bg: 'rgba(224,138,60,0.12)' },
-  { letter: 'В', title: 'Вес и тело', desc: 'вес · замеры · прогресс', screen: 'weight', color: '#e8c96a', bg: 'rgba(201,168,76,0.12)' },
-  { letter: 'С', title: 'Сон', desc: 'длительность · качество · режим', screen: 'sleep', color: '#a8a0d8', bg: 'rgba(126,111,210,0.12)' },
-  { letter: 'В', title: 'Витамины', desc: 'курсы · приём · напоминания', screen: 'vitamins', color: '#7ec4a0', bg: 'rgba(76,175,130,0.12)' },
-  { letter: 'Ф', title: 'Фото прогресса', desc: 'до/после · сравнение · таймлайн', screen: 'photos', color: '#d89999', bg: 'rgba(201,123,123,0.12)' },
+  { letter: 'А', title: 'Анализы и врачи', desc: 'визиты · результаты · чеклист', screen: 'doctors', color: '#8ab8e0', bg: 'rgba(90,154,224,0.1)', border: 'rgba(90,154,224,0.25)' },
+  { letter: 'С', title: 'Симптомы', desc: 'трекинг · динамика · заметки', screen: 'symptoms', color: '#e08a3c', bg: 'rgba(224,138,60,0.1)', border: 'rgba(224,138,60,0.25)' },
+  { letter: 'В', title: 'Вес и тело', desc: 'вес · замеры · прогресс', screen: 'weight', color: 'var(--gold-text)', bg: 'rgba(201,168,76,0.1)', border: 'rgba(201,168,76,0.25)' },
+  { letter: 'С', title: 'Сон', desc: 'длительность · качество · режим', screen: 'sleep', color: '#a8a0d8', bg: 'rgba(126,111,210,0.1)', border: 'rgba(126,111,210,0.25)' },
+  { letter: 'В', title: 'Витамины', desc: 'курсы · приём · напоминания', screen: 'vitamins', color: '#7ec4a0', bg: 'rgba(76,175,130,0.1)', border: 'rgba(76,175,130,0.25)' },
+  { letter: 'Ф', title: 'Фото прогресса', desc: 'до/после · сравнение · таймлайн', screen: 'photos', color: '#d89999', bg: 'rgba(201,123,123,0.1)', border: 'rgba(201,123,123,0.25)' },
 ]
 
 export function HealthDashboard({ onNavigate }: Props) {
@@ -54,252 +55,246 @@ export function HealthDashboard({ onNavigate }: Props) {
     ? SYMPTOM_LIST.filter(s => (latestSymp.ratings[s.id] ?? 0) > 0).length
     : 0
 
-  // Upcoming doctor visit
-  const upcoming = health.doctorVisits
-    .filter(v => v.status === 'planned' && v.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date))[0]
-
   return (
-    <div style={{ padding: '16px 16px 80px', maxWidth: 480, margin: '0 auto' }}>
-      {/* Header */}
+    <div style={{
+      position: 'relative',
+      zIndex: 1,
+      height: 'calc(100dvh - 70px - env(safe-area-inset-bottom, 0px))',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      padding: 'calc(16px + env(safe-area-inset-top, 0px)) 20px 0',
+    }}>
+      {/* Status bar */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 12,
+        flexShrink: 0,
       }}>
         <span style={{
-          fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
-          letterSpacing: 2, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase',
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          letterSpacing: 2.5, color: 'var(--text-faint)', textTransform: 'uppercase',
         }}>
           ЗДОРОВЬЕ · 19 АПР
         </span>
         <span style={{
-          fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
-          letterSpacing: 2, color: '#e08a3c',
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          letterSpacing: 2.5, color: '#e08a3c',
         }}>
           ● ЭТАП 0
         </span>
       </div>
 
       {/* Title */}
-      <div style={{ marginBottom: 36 }}>
-        <h1 style={{
-          fontFamily: 'Cormorant Garamond, Cormorant, serif', fontWeight: 300,
-          fontSize: 40, lineHeight: 1.1, color: '#ffffff', margin: 0,
-        }}>
-          Здоровье
-        </h1>
-        <span style={{
-          fontFamily: 'Cormorant Garamond, Cormorant, serif', fontWeight: 300,
-          fontSize: 32, fontStyle: 'italic', color: 'rgba(90,154,224,0.85)',
-        }}>
+      <h1 style={{
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+        fontWeight: 300,
+        fontSize: 36,
+        lineHeight: 1.05,
+        letterSpacing: -1,
+        color: 'var(--text-primary)',
+        margin: '0 0 12px',
+        flexShrink: 0,
+      }}>
+        Здоровье{'\n'}
+        <span style={{ color: 'rgba(144,185,226,0.85)', fontStyle: 'italic', fontSize: 28 }}>
           до всего остального
         </span>
-      </div>
+      </h1>
 
       {/* Urgent card */}
-      {upcoming && (
-        <div style={{
-          padding: 20,
-          background: 'linear-gradient(135deg, rgba(224,138,60,0.08), rgba(224,90,90,0.03))',
-          border: '1px solid rgba(224,138,60,0.25)',
-          borderRadius: 16,
-          marginBottom: 20,
-        }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10,
+      <div style={{
+        padding: '14px 14px',
+        background: 'linear-gradient(135deg, rgba(224,138,60,0.08), rgba(224,90,90,0.03))',
+        border: '1px solid rgba(224,138,60,0.25)',
+        borderRadius: 16,
+        marginBottom: 14,
+        flexShrink: 0,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: '50%', background: '#e08a3c',
+            boxShadow: '0 0 10px rgba(224,138,60,0.6)',
+            display: 'inline-block',
+          }} />
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+            letterSpacing: 2.5, color: '#e08a3c',
           }}>
-            <span style={{
-              width: 6, height: 6, borderRadius: '50%', background: '#e08a3c',
-              display: 'inline-block',
-            }} />
-            <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-              letterSpacing: 2, color: '#e08a3c', textTransform: 'uppercase',
-            }}>
-              СРОЧНО · БЛИЖАЙШИЕ 3 НЕДЕЛИ
-            </span>
-          </div>
-          <div style={{
-            fontFamily: 'Cormorant Garamond, Cormorant, serif',
-            fontSize: 20, color: '#ffffff', marginBottom: 6,
-          }}>
-            Записаться к терапевту
-          </div>
-          <div style={{
-            fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5,
-            marginBottom: 12,
-          }}>
-            Общий осмотр, направления на анализы. Найти клинику рядом, записаться онлайн.
-          </div>
-          <div style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          }}>
-            <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#e08a3c',
-            }}>
-              25 000 ₽
-            </span>
-          </div>
+            СРОЧНО · БЛИЖАЙШИЕ 3 НЕДЕЛИ
+          </span>
         </div>
-      )}
-
-      {/* If no upcoming visit, show a static urgent card */}
-      {!upcoming && (
         <div style={{
-          padding: 20,
-          background: 'linear-gradient(135deg, rgba(224,138,60,0.08), rgba(224,90,90,0.03))',
-          border: '1px solid rgba(224,138,60,0.25)',
-          borderRadius: 16,
-          marginBottom: 20,
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontSize: 20, color: 'var(--text-primary)', lineHeight: 1.3, marginBottom: 4,
         }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10,
-          }}>
-            <span style={{
-              width: 6, height: 6, borderRadius: '50%', background: '#e08a3c',
-              display: 'inline-block',
-            }} />
-            <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-              letterSpacing: 2, color: '#e08a3c', textTransform: 'uppercase',
-            }}>
-              СРОЧНО · БЛИЖАЙШИЕ 3 НЕДЕЛИ
-            </span>
-          </div>
-          <div style={{
-            fontFamily: 'Cormorant Garamond, Cormorant, serif',
-            fontSize: 20, color: '#ffffff', marginBottom: 6,
-          }}>
-            Записаться к терапевту
-          </div>
-          <div style={{
-            fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5,
-            marginBottom: 12,
-          }}>
-            Общий осмотр, направления на анализы. Найти клинику рядом, записаться онлайн.
-          </div>
-          <div style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          }}>
-            <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#e08a3c',
-            }}>
-              25 000 ₽
-            </span>
-          </div>
+          Записаться к терапевту
         </div>
-      )}
+        <div style={{
+          fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 10,
+        }}>
+          Общий осмотр, направления на анализы. Найти клинику рядом, записаться онлайн.
+        </div>
+        <div style={{
+          borderTop: '1px solid var(--border-muted)',
+          paddingTop: 8,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+            letterSpacing: 2, color: 'var(--text-ghost)',
+          }}>
+            БЮДЖЕТ
+          </span>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: '#e08a3c',
+          }}>
+            25 000 ₽
+          </span>
+        </div>
+      </div>
 
-      {/* Metrics grid 2x2 */}
+      {/* Metrics divider */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        marginBottom: 10,
+        flexShrink: 0,
+      }}>
+        <span style={{
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          letterSpacing: 2.5, color: 'rgba(90,154,224,0.7)',
+          textTransform: 'uppercase', whiteSpace: 'nowrap',
+        }}>ПОКАЗАТЕЛИ</span>
+        <div style={{
+          flex: 1, height: 1,
+          background: 'rgba(90,154,224,0.15)',
+        }} />
+        <span style={{
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          letterSpacing: 2.5, color: 'rgba(90,154,224,0.7)',
+          textTransform: 'uppercase', whiteSpace: 'nowrap',
+        }}>СТАРТ</span>
+      </div>
+
+      {/* Metrics grid */}
       <div style={{
         display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,
-        marginBottom: 28,
+        marginBottom: 14,
+        flexShrink: 0,
       }}>
         {/* ВЕС */}
         <div style={{
-          padding: 16,
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.04)',
+          padding: 12,
+          background: 'var(--surface-card)',
+          border: '1px solid var(--border-faint)',
           borderRadius: 12,
         }}>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            letterSpacing: 2, color: 'rgba(255,255,255,0.35)',
-            marginBottom: 6, textTransform: 'uppercase',
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+            letterSpacing: 2, color: 'var(--text-faint)',
+            marginBottom: 8,
           }}>ВЕС</div>
-          <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontWeight: 300,
-            fontSize: 26, color: '#ffffff',
-          }}>
-            {latestWeight ? latestWeight.weight : '—'}
+          <div>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontWeight: 300,
+              fontSize: 26, color: 'var(--text-primary)', letterSpacing: -1,
+            }}>
+              {latestWeight ? latestWeight.weight : '—'}
+            </span>
             {latestWeight && (
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', marginLeft: 3 }}>кг</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'var(--text-ghost)', marginLeft: 4 }}>кг</span>
             )}
           </div>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            color: 'rgba(201,168,76,0.7)', marginTop: 4,
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+            color: 'var(--gold-text-muted)', marginTop: 4,
           }}>цель: 73-75</div>
         </div>
 
         {/* СОН */}
         <div style={{
-          padding: 16,
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.04)',
+          padding: 12,
+          background: 'var(--surface-card)',
+          border: '1px solid var(--border-faint)',
           borderRadius: 12,
         }}>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            letterSpacing: 2, color: 'rgba(255,255,255,0.35)',
-            marginBottom: 6, textTransform: 'uppercase',
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+            letterSpacing: 2, color: 'var(--text-faint)',
+            marginBottom: 8,
           }}>СОН</div>
-          <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontWeight: 300,
-            fontSize: 26, color: '#ffffff',
-          }}>
-            {sleepHours ?? '—'}
+          <div>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontWeight: 300,
+              fontSize: 26, color: 'var(--text-primary)', letterSpacing: -1,
+            }}>
+              {sleepHours ?? '—'}
+            </span>
             {sleepHours && (
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', marginLeft: 3 }}>ч</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'var(--text-ghost)', marginLeft: 4 }}>ч</span>
             )}
           </div>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            color: 'rgba(201,168,76,0.7)', marginTop: 4,
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+            color: 'var(--gold-text-muted)', marginTop: 4,
           }}>цель: 7+ ч</div>
         </div>
 
         {/* ЭНЕРГИЯ */}
         <div style={{
-          padding: 16,
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.04)',
+          padding: 12,
+          background: 'var(--surface-card)',
+          border: '1px solid var(--border-faint)',
           borderRadius: 12,
         }}>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            letterSpacing: 2, color: 'rgba(255,255,255,0.35)',
-            marginBottom: 6, textTransform: 'uppercase',
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+            letterSpacing: 2, color: 'var(--text-faint)',
+            marginBottom: 8,
           }}>ЭНЕРГИЯ</div>
-          <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontWeight: 300,
-            fontSize: 26, color: '#ffffff',
-          }}>
-            {energy > 0 ? energy : '—'}
+          <div>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontWeight: 300,
+              fontSize: 26, color: 'var(--text-primary)', letterSpacing: -1,
+            }}>
+              {energy > 0 ? energy : '—'}
+            </span>
             {energy > 0 && (
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', marginLeft: 3 }}>/10</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'var(--text-ghost)', marginLeft: 4 }}>/10</span>
             )}
           </div>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            color: 'rgba(201,168,76,0.7)', marginTop: 4,
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+            color: 'var(--gold-text-muted)', marginTop: 4,
           }}>суб. оценка</div>
         </div>
 
         {/* СИМПТОМЫ */}
         <div style={{
-          padding: 16,
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.04)',
+          padding: 12,
+          background: 'var(--surface-card)',
+          border: '1px solid var(--border-faint)',
           borderRadius: 12,
         }}>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            letterSpacing: 2, color: 'rgba(255,255,255,0.35)',
-            marginBottom: 6, textTransform: 'uppercase',
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+            letterSpacing: 2, color: 'var(--text-faint)',
+            marginBottom: 8,
           }}>СИМПТОМЫ</div>
-          <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontWeight: 300,
-            fontSize: 26, color: '#e08a3c',
-          }}>
-            {latestSymp ? activeSymptomCount : '—'}
+          <div>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontWeight: 300,
+              fontSize: 26, color: '#e08a3c', letterSpacing: -1,
+            }}>
+              {latestSymp ? activeSymptomCount : '—'}
+            </span>
             {latestSymp && (
-              <span style={{ fontSize: 13, color: 'rgba(224,138,60,0.5)', marginLeft: 3 }}>/7</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'var(--text-ghost)', marginLeft: 4 }}>/7</span>
             )}
           </div>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-            color: 'rgba(224,138,60,0.5)', marginTop: 4,
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+            color: 'var(--gold-text-muted)', marginTop: 4,
           }}>активных</div>
         </div>
       </div>
@@ -307,11 +302,12 @@ export function HealthDashboard({ onNavigate }: Props) {
       {/* Sections divider */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10,
-        marginBottom: 16,
+        marginBottom: 8,
+        flexShrink: 0,
       }}>
         <span style={{
-          fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-          letterSpacing: 2, color: 'rgba(90,154,224,0.7)',
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          letterSpacing: 2.5, color: 'rgba(90,154,224,0.7)',
           textTransform: 'uppercase', whiteSpace: 'nowrap',
         }}>РАЗДЕЛЫ</span>
         <div style={{
@@ -320,71 +316,46 @@ export function HealthDashboard({ onNavigate }: Props) {
         }} />
       </div>
 
-      {/* Section navigation */}
-      <div style={{ marginBottom: 28 }}>
-        {SECTIONS.map((sec, i) => (
-          <button
-            key={sec.screen}
-            onClick={() => onNavigate(sec.screen)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 12,
-              width: '100%', padding: '12px 0',
-              background: 'none', border: 'none', cursor: 'pointer',
-              borderBottom: i < SECTIONS.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-              textAlign: 'left',
-            }}
-          >
-            {/* Icon box */}
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: sec.bg,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <span style={{
-                fontFamily: 'Cormorant Garamond, Cormorant, serif',
-                fontStyle: 'italic', fontSize: 16, color: sec.color,
-                lineHeight: 1,
-              }}>{sec.letter}</span>
-            </div>
-
-            {/* Text */}
-            <div style={{ flex: 1, minWidth: 0 }}>
+      {/* Navigation rows */}
+      <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {NAV_ITEMS.map((item, i) => (
+            <div
+              key={item.screen}
+              onClick={() => onNavigate(item.screen)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '12px 4px',
+                borderBottom: i < NAV_ITEMS.length - 1 ? '1px solid var(--border-faint)' : 'none',
+                cursor: 'pointer',
+              }}
+            >
+              {/* Icon box */}
               <div style={{
-                fontSize: 14, color: '#ffffff', marginBottom: 2,
-              }}>{sec.title}</div>
-              <div style={{
-                fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
-                color: 'rgba(255,255,255,0.3)',
-              }}>{sec.desc}</div>
+                width: 28, height: 28, borderRadius: 8,
+                background: item.bg,
+                border: `1px solid ${item.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 14, fontStyle: 'italic',
+              }}>
+                <span style={{ color: item.color, lineHeight: 1 }}>{item.letter}</span>
+              </div>
+
+              {/* Text */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 14, color: 'var(--text-primary)', marginBottom: 2 }}>{item.title}</div>
+                <div style={{
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+                  color: 'var(--text-ghost)',
+                }}>{item.desc}</div>
+              </div>
+
+              {/* Arrow */}
+              <span style={{ color: 'var(--text-ghost)', fontSize: 16, flexShrink: 0 }}>→</span>
             </div>
-
-            {/* Arrow */}
-            <span style={{
-              fontSize: 16, color: 'rgba(255,255,255,0.15)', flexShrink: 0,
-            }}>→</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Bottom hadith */}
-      <div style={{
-        background: 'rgba(255,255,255,0.02)',
-        borderRadius: 12,
-        padding: 16,
-      }}>
-        <div style={{
-          fontFamily: 'Cormorant Garamond, Cormorant, serif',
-          fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.45)',
-          lineHeight: 1.6, marginBottom: 8,
-        }}>
-          «Воистину, у твоего тела есть на тебя право»
-        </div>
-        <div style={{
-          fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-          color: 'rgba(255,255,255,0.2)', letterSpacing: 1,
-        }}>
-          САХИХ АЛЬ-БУХАРИ
+          ))}
         </div>
       </div>
     </div>

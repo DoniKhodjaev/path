@@ -3,6 +3,36 @@ import { useHealthStore } from '../../store/useHealthStore'
 import { todayStr } from '../../utils/dates'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts'
 
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  background: 'var(--color-dusk)',
+  borderRadius: 8,
+  padding: '10px 12px',
+  fontFamily: "'JetBrains Mono', monospace",
+  fontSize: 13,
+  color: 'var(--text-primary)',
+  outline: 'none',
+  border: '1px solid var(--border-muted)',
+}
+
+const cardStyle: React.CSSProperties = {
+  background: 'var(--surface-overlay)',
+  borderRadius: 16,
+  padding: 16,
+  border: '1px solid var(--border-muted)',
+}
+
+const sectionLabel: React.CSSProperties = {
+  fontFamily: "'JetBrains Mono', monospace",
+  fontSize: 9,
+  letterSpacing: 2,
+  color: 'var(--text-faint)',
+  textTransform: 'uppercase',
+  margin: 0,
+}
+
+const mono = "'JetBrains Mono', monospace"
+
 export function Sleep() {
   const health = useHealthStore()
   const [form, setForm] = useState({ bedtime: '23:00', wakeTime: '06:00', quality: 7, awakenings: 0 })
@@ -44,73 +74,79 @@ export function Sleep() {
     return cells
   }, [health.sleepEntries])
 
-  const inputCls = "w-full bg-dusk rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-dusk focus:border-gold/30"
-
   return (
-    <div className="space-y-6">
-      <h2 className="text-h1 text-gold">Сон</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: 24, color: 'var(--gold-text)', margin: 0 }}>Сон</h2>
 
       {/* Add entry */}
-      <div className="bg-twilight rounded-2xl p-4 border border-dusk space-y-3">
-        <p className="font-mono text-xs text-ink-mute uppercase tracking-wider">Записать сон</p>
-        <div className="grid grid-cols-2 gap-2">
+      <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <p style={sectionLabel}>Записать сон</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           <div>
-            <label className="font-mono text-[10px] text-ink-mute block mb-1">Отбой</label>
-            <input type="time" value={form.bedtime} onChange={e => setForm({...form, bedtime: e.target.value})} className={inputCls} />
+            <label style={{ fontFamily: mono, fontSize: 10, color: 'var(--text-faint)', display: 'block', marginBottom: 4 }}>Отбой</label>
+            <input type="time" value={form.bedtime} onChange={e => setForm({...form, bedtime: e.target.value})} style={inputStyle} />
           </div>
           <div>
-            <label className="font-mono text-[10px] text-ink-mute block mb-1">Подъём</label>
-            <input type="time" value={form.wakeTime} onChange={e => setForm({...form, wakeTime: e.target.value})} className={inputCls} />
+            <label style={{ fontFamily: mono, fontSize: 10, color: 'var(--text-faint)', display: 'block', marginBottom: 4 }}>Подъём</label>
+            <input type="time" value={form.wakeTime} onChange={e => setForm({...form, wakeTime: e.target.value})} style={inputStyle} />
           </div>
         </div>
         <div>
-          <div className="flex justify-between">
-            <label className="font-mono text-[10px] text-ink-mute">Качество сна</label>
-            <span className="font-mono text-sm text-gold">{form.quality}/10</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <label style={{ fontFamily: mono, fontSize: 10, color: 'var(--text-faint)' }}>Качество сна</label>
+            <span style={{ fontFamily: mono, fontSize: 13, color: '#c9a84c' }}>{form.quality}/10</span>
           </div>
           <input type="range" min="1" max="10" value={form.quality}
             onChange={e => setForm({...form, quality: Number(e.target.value)})}
-            className="w-full h-1 bg-dusk rounded-full appearance-none cursor-pointer
-              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4
-              [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gold" />
+            style={{ width: '100%', height: 4, background: 'var(--color-dusk)', borderRadius: 2, appearance: 'none', cursor: 'pointer', accentColor: '#c9a84c' }} />
         </div>
         <div>
-          <label className="font-mono text-[10px] text-ink-mute block mb-1">Пробуждения ночью</label>
+          <label style={{ fontFamily: mono, fontSize: 10, color: 'var(--text-faint)', display: 'block', marginBottom: 4 }}>Пробуждения ночью</label>
           <input type="number" min="0" value={form.awakenings}
-            onChange={e => setForm({...form, awakenings: Number(e.target.value)})} className={inputCls} />
+            onChange={e => setForm({...form, awakenings: Number(e.target.value)})} style={inputStyle} />
         </div>
-        <button onClick={handleSave} className="w-full py-2 bg-gold/20 text-gold font-mono text-sm rounded">Сохранить</button>
+        <button onClick={handleSave} style={{
+          width: '100%', padding: '10px 0', background: 'rgba(201,168,76,0.2)', color: '#c9a84c',
+          fontFamily: mono, fontSize: 13, borderRadius: 8, border: 'none', cursor: 'pointer',
+        }}>Сохранить</button>
       </div>
 
       {/* Calendar */}
-      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
-        <p className="font-mono text-xs text-ink-mute uppercase tracking-wider mb-3">
+      <div style={cardStyle}>
+        <p style={{ ...sectionLabel, marginBottom: 12 }}>
           {new Date().toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
         </p>
-        <div className="grid grid-cols-7 gap-1 mb-1">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
           {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(d => (
-            <span key={d} className="font-mono text-[9px] text-ink-mute text-center">{d}</span>
+            <span key={d} style={{ fontFamily: mono, fontSize: 9, color: 'var(--text-faint)', textAlign: 'center' }}>{d}</span>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-1">
-          {calendarData.map((cell, i) => (
-            <div key={i} className={`aspect-square rounded-sm flex items-center justify-center font-mono text-[10px] ${
-              cell.day === 0 ? '' :
-              cell.quality === null ? 'bg-dusk/30 text-ink-mute' :
-              cell.quality >= 7 ? 'bg-sacred/30 text-sacred' :
-              cell.quality >= 4 ? 'bg-gold/20 text-gold' :
-              'bg-danger/20 text-danger'
-            }`}>
-              {cell.day > 0 ? cell.day : ''}
-            </div>
-          ))}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+          {calendarData.map((cell, i) => {
+            let bg = 'transparent'
+            let color = 'transparent'
+            if (cell.day > 0) {
+              if (cell.quality === null) { bg = 'rgba(21,29,53,0.3)'; color = 'var(--text-faint)' }
+              else if (cell.quality >= 7) { bg = 'rgba(76,175,130,0.3)'; color = '#4caf82' }
+              else if (cell.quality >= 4) { bg = 'rgba(201,168,76,0.2)'; color = '#c9a84c' }
+              else { bg = 'rgba(224,90,90,0.2)'; color = '#e05a5a' }
+            }
+            return (
+              <div key={i} style={{
+                aspectRatio: '1', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: mono, fontSize: 10, background: bg, color,
+              }}>
+                {cell.day > 0 ? cell.day : ''}
+              </div>
+            )
+          })}
         </div>
       </div>
 
       {/* Duration chart */}
       {chartData.length > 1 && (
-        <div className="bg-twilight rounded-2xl p-4 border border-dusk">
-          <p className="font-mono text-xs text-ink-mute uppercase tracking-wider mb-3">Длительность сна</p>
+        <div style={cardStyle}>
+          <p style={{ ...sectionLabel, marginBottom: 12 }}>Длительность сна</p>
           <ResponsiveContainer width="100%" height={150}>
             <BarChart data={chartData}>
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#8a8a8a' }} />

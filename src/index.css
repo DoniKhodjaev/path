@@ -36,6 +36,36 @@
   --color-ink-mute: #8a8a8a;
   --color-txt: #d4cfc7;
 
+  /* Semantic text opacities */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.85);
+  --text-muted: rgba(255,255,255,0.6);
+  --text-subtle: rgba(255,255,255,0.45);
+  --text-faint: rgba(255,255,255,0.4);
+  --text-ghost: rgba(255,255,255,0.3);
+  --text-dim: rgba(255,255,255,0.15);
+
+  /* Semantic gold text */
+  --gold-text: #e8c96a;
+  --gold-text-muted: rgba(232,201,106,0.6);
+  --gold-text-faint: rgba(232,201,106,0.4);
+  --gold-text-label: rgba(201,168,76,0.6);
+  --gold-text-divider: rgba(201,168,76,0.7);
+
+  /* Surface / card backgrounds */
+  --surface-card: rgba(255,255,255,0.02);
+  --surface-card-hover: rgba(255,255,255,0.03);
+  --surface-elevated: rgba(255,255,255,0.06);
+  --surface-overlay: #0f1528;
+  --surface-dot: #0a0f1e;
+
+  /* Borders */
+  --border-subtle: rgba(255,255,255,0.05);
+  --border-muted: rgba(255,255,255,0.06);
+  --border-faint: rgba(255,255,255,0.04);
+  --border-gold: rgba(201,168,76,0.15);
+  --border-gold-strong: rgba(201,168,76,0.25);
+
   /* Fonts */
   --font-heading: "Cormorant Garamond", serif;
   --font-ui: "Inter", sans-serif;
@@ -70,6 +100,36 @@
   --color-ink: #2c2416;
   --color-ink-mute: rgba(44,36,22,0.55);
   --color-txt: #2c2416;
+
+  /* Semantic text opacities */
+  --text-primary: #1a1408;
+  --text-secondary: rgba(44,36,22,0.88);
+  --text-muted: rgba(44,36,22,0.65);
+  --text-subtle: rgba(44,36,22,0.5);
+  --text-faint: rgba(44,36,22,0.45);
+  --text-ghost: rgba(44,36,22,0.3);
+  --text-dim: rgba(44,36,22,0.12);
+
+  /* Semantic gold text */
+  --gold-text: #8b6914;
+  --gold-text-muted: rgba(139,105,20,0.7);
+  --gold-text-faint: rgba(139,105,20,0.5);
+  --gold-text-label: rgba(139,105,20,0.7);
+  --gold-text-divider: rgba(139,105,20,0.8);
+
+  /* Surface / card backgrounds */
+  --surface-card: rgba(44,36,22,0.03);
+  --surface-card-hover: rgba(44,36,22,0.05);
+  --surface-elevated: rgba(44,36,22,0.06);
+  --surface-overlay: #ffffff;
+  --surface-dot: #faf6ed;
+
+  /* Borders */
+  --border-subtle: rgba(44,36,22,0.08);
+  --border-muted: rgba(44,36,22,0.08);
+  --border-faint: rgba(44,36,22,0.06);
+  --border-gold: rgba(139,105,20,0.15);
+  --border-gold-strong: rgba(139,105,20,0.25);
 }
 
 /* Theme transitions */

@@ -11,40 +11,46 @@ export function Levels() {
   const xpToNext = nextLevel ? nextLevel.minXp - xp : 0
 
   // Ring geometry
-  const ringSize = 180
-  const ringRadius = 80
+  const ringSize = 160
+  const ringRadius = 70
   const ringCircumference = 2 * Math.PI * ringRadius
   const ringOffset = ringCircumference - (ringCircumference * progress) / 100
 
   const earnedCount = BADGE_DEFINITIONS.filter(b => badges.includes(b.id)).length
 
   return (
-    <div className="pb-20" style={{ padding: '0 20px 80px' }}>
+    <div style={{ padding: '0 20px 40px' }}>
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
+      <div style={{ marginBottom: 20 }}>
         <p
-          className="font-mono"
           style={{
+            fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10,
             letterSpacing: 3,
-            color: 'rgba(201,168,76,0.6)',
-            marginBottom: 8,
+            color: 'var(--gold-text-label)',
+            marginBottom: 6,
             textTransform: 'uppercase',
           }}
         >
           УРОВНИ И НАГРАДЫ
         </p>
         <h1
-          className="font-heading"
-          style={{ fontSize: 40, fontWeight: 300, color: 'var(--color-ink)', lineHeight: 1.1 }}
+          style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontSize: 36,
+            fontWeight: 300,
+            color: 'var(--color-ink)',
+            lineHeight: 1.1,
+            margin: 0,
+          }}
         >
           Твой{' '}
-          <span style={{ fontStyle: 'italic', color: '#e8c96a' }}>путь</span>
+          <span style={{ fontStyle: 'italic', color: 'var(--gold-text)' }}>путь</span>
         </h1>
       </div>
 
       {/* Ring indicator */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 20 }}>
         <div style={{ position: 'relative', width: ringSize, height: ringSize }}>
           <svg width={ringSize} height={ringSize} viewBox={`0 0 ${ringSize} ${ringSize}`}>
             <defs>
@@ -53,16 +59,14 @@ export function Levels() {
                 <stop offset="100%" stopColor="#e8c96a" />
               </linearGradient>
             </defs>
-            {/* Background circle */}
             <circle
               cx={ringSize / 2}
               cy={ringSize / 2}
               r={ringRadius}
               fill="none"
-              stroke="rgba(255,255,255,0.05)"
+              stroke="var(--border-subtle)"
               strokeWidth={3}
             />
-            {/* Progress circle */}
             <circle
               cx={ringSize / 2}
               cy={ringSize / 2}
@@ -76,7 +80,6 @@ export function Levels() {
               transform={`rotate(-90 ${ringSize / 2} ${ringSize / 2})`}
             />
           </svg>
-          {/* Center text */}
           <div
             style={{
               position: 'absolute',
@@ -88,25 +91,34 @@ export function Levels() {
             }}
           >
             <span
-              className="font-mono"
               style={{
+                fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 9,
                 letterSpacing: 3,
-                color: 'rgba(255,255,255,0.4)',
+                color: 'var(--text-faint)',
                 textTransform: 'uppercase',
               }}
             >
               УРОВЕНЬ
             </span>
             <span
-              className="font-heading"
-              style={{ fontSize: 64, fontWeight: 300, lineHeight: 1, color: 'var(--color-ink)' }}
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 56,
+                fontWeight: 300,
+                lineHeight: 1,
+                color: 'var(--color-ink)',
+              }}
             >
               {currentLevel.level}
             </span>
             <span
-              className="font-heading"
-              style={{ fontSize: 16, fontStyle: 'italic', color: '#e8c96a' }}
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 15,
+                fontStyle: 'italic',
+                color: 'var(--gold-text)',
+              }}
             >
               {currentLevel.name}
             </span>
@@ -114,27 +126,34 @@ export function Levels() {
         </div>
 
         {/* XP display */}
-        <div style={{ textAlign: 'center', marginTop: 20 }}>
+        <div style={{ textAlign: 'center', marginTop: 14 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 6 }}>
             <span
-              className="font-mono"
-              style={{ fontSize: 32, fontWeight: 300, color: '#e8c96a' }}
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 28,
+                fontWeight: 300,
+                color: 'var(--gold-text)',
+              }}
             >
               {xp.toLocaleString('ru-RU')}
             </span>
             <span
-              className="font-mono"
-              style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)' }}
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 13,
+                color: 'var(--text-faint)',
+              }}
             >
               XP
             </span>
           </div>
           {nextLevel && (
             <p
-              className="font-mono"
               style={{
+                fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 10,
-                color: 'rgba(255,255,255,0.4)',
+                color: 'var(--text-faint)',
                 marginTop: 4,
               }}
             >
@@ -150,15 +169,15 @@ export function Levels() {
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          marginBottom: 16,
+          marginBottom: 12,
         }}
       >
         <span
-          className="font-mono"
           style={{
+            fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10,
             letterSpacing: 2,
-            color: 'rgba(255,255,255,0.4)',
+            color: 'var(--text-faint)',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
           }}
@@ -175,7 +194,7 @@ export function Levels() {
       </div>
 
       {/* Level list */}
-      <div style={{ marginBottom: 32 }}>
+      <div style={{ marginBottom: 20 }}>
         {LEVELS.map((lvl) => {
           const isReached = xp >= lvl.minXp
           const isCurrent = currentLevel.level === lvl.level
@@ -190,48 +209,46 @@ export function Levels() {
                 display: 'grid',
                 gridTemplateColumns: '28px 1fr auto',
                 alignItems: 'center',
-                padding: '10px 12px',
+                padding: '8px 12px',
                 borderRadius: isCurrent ? 12 : 0,
                 marginBottom: 2,
                 opacity: isCompleted ? 0.5 : 1,
                 ...(isCurrent
                   ? {
                       background: 'linear-gradient(135deg, rgba(201,168,76,0.08), rgba(232,201,106,0.04))',
-                      border: '1px solid rgba(201,168,76,0.25)',
+                      border: '1px solid var(--border-gold-strong)',
                     }
                   : {}),
               }}
             >
-              {/* Number */}
               <span
-                className="font-mono"
                 style={{
+                  fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 11,
-                  color: isCurrent ? '#e8c96a' : 'rgba(255,255,255,0.4)',
+                  color: isCurrent ? 'var(--gold-text)' : 'var(--text-faint)',
                 }}
               >
                 {lvl.level}
               </span>
 
-              {/* Name */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {isLast ? (
                   <span
-                    className="font-heading"
                     style={{
+                      fontFamily: "'Cormorant Garamond', Georgia, serif",
                       fontSize: 14,
                       fontStyle: 'italic',
-                      color: '#e8c96a',
+                      color: 'var(--gold-text)',
                     }}
                   >
                     {lvl.name}
                   </span>
                 ) : (
                   <span
-                    className="font-mono"
                     style={{
+                      fontFamily: "'JetBrains Mono', monospace",
                       fontSize: 12,
-                      color: isCurrent ? 'var(--color-ink)' : 'rgba(255,255,255,0.6)',
+                      color: isCurrent ? 'var(--color-ink)' : 'var(--text-muted)',
                     }}
                   >
                     {lvl.name}
@@ -239,11 +256,11 @@ export function Levels() {
                 )}
                 {isCurrent && (
                   <span
-                    className="font-mono"
                     style={{
+                      fontFamily: "'JetBrains Mono', monospace",
                       fontSize: 8,
                       letterSpacing: 2,
-                      color: '#e8c96a',
+                      color: 'var(--gold-text)',
                       background: 'rgba(232,201,106,0.12)',
                       padding: '2px 6px',
                       borderRadius: 4,
@@ -253,10 +270,8 @@ export function Levels() {
                     ТЫ ЗДЕСЬ
                   </span>
                 )}
-                {isLast && <span style={{ fontSize: 14 }}>🏆</span>}
               </div>
 
-              {/* Status */}
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {isCompleted && (
                   <svg width={14} height={14} viewBox="0 0 14 14">
@@ -266,21 +281,27 @@ export function Levels() {
                 )}
                 {isCurrent && (
                   <span
-                    className="font-mono"
-                    style={{ fontSize: 10, color: '#e8c96a' }}
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 10,
+                      color: 'var(--gold-text)',
+                    }}
                   >
                     {xp.toLocaleString('ru-RU')} XP
                   </span>
                 )}
                 {isFuture && !isLast && (
                   <svg width={14} height={14} viewBox="0 0 14 14">
-                    <circle cx={7} cy={7} r={6} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth={1} />
+                    <circle cx={7} cy={7} r={6} fill="none" stroke="var(--text-dim)" strokeWidth={1} />
                   </svg>
                 )}
                 {isFuture && isLast && (
                   <span
-                    className="font-mono"
-                    style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 10,
+                      color: 'var(--text-faint)',
+                    }}
                   >
                     30 000+ · финал
                   </span>
@@ -297,15 +318,15 @@ export function Levels() {
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          marginBottom: 16,
+          marginBottom: 12,
         }}
       >
         <span
-          className="font-mono"
           style={{
+            fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10,
             letterSpacing: 2,
-            color: 'rgba(255,255,255,0.4)',
+            color: 'var(--text-faint)',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
           }}
@@ -320,8 +341,11 @@ export function Levels() {
           }}
         />
         <span
-          className="font-mono"
-          style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 10,
+            color: 'var(--text-faint)',
+          }}
         >
           {earnedCount} / {BADGE_DEFINITIONS.length}
         </span>
@@ -332,8 +356,8 @@ export function Levels() {
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: 10,
-          marginBottom: 32,
+          gap: 8,
+          marginBottom: 20,
         }}
       >
         {BADGE_DEFINITIONS.map((badge) => {
@@ -342,45 +366,45 @@ export function Levels() {
             <div
               key={badge.id}
               style={{
-                padding: '14px 12px',
+                padding: '12px 10px',
                 borderRadius: 12,
                 opacity: earned ? 1 : 0.5,
                 ...(earned
                   ? {
                       background: 'linear-gradient(135deg, rgba(201,168,76,0.1), rgba(232,201,106,0.05))',
-                      border: '1px solid rgba(201,168,76,0.25)',
+                      border: '1px solid var(--border-gold-strong)',
                     }
                   : {
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid rgba(255,255,255,0.06)',
+                      background: 'var(--surface-card-hover)',
+                      border: '1px solid var(--border-muted)',
                     }),
               }}
             >
-              <div style={{ fontSize: 22, marginBottom: 8 }}>{badge.icon}</div>
+              <div style={{ fontSize: 20, marginBottom: 6 }}>{badge.icon}</div>
               <p
-                className="font-mono"
                 style={{
+                  fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 11,
-                  color: earned ? 'var(--color-ink)' : 'rgba(255,255,255,0.4)',
+                  color: earned ? 'var(--color-ink)' : 'var(--text-faint)',
                   marginBottom: 2,
                 }}
               >
                 {badge.name}
               </p>
               <p
-                className="font-mono"
                 style={{
+                  fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 9,
-                  color: 'rgba(255,255,255,0.3)',
-                  marginBottom: earned ? 8 : 0,
+                  color: 'var(--text-ghost)',
+                  marginBottom: earned ? 6 : 0,
                 }}
               >
                 {badge.description}
               </p>
               {earned && (
                 <span
-                  className="font-mono"
                   style={{
+                    fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 8,
                     letterSpacing: 2,
                     color: '#4caf82',
@@ -401,25 +425,25 @@ export function Levels() {
       {/* XP earning info */}
       <div
         style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'var(--surface-card-hover)',
+          border: '1px solid var(--border-muted)',
           borderRadius: 12,
-          padding: '16px',
+          padding: 14,
         }}
       >
         <p
-          className="font-mono"
           style={{
+            fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10,
             letterSpacing: 2,
-            color: 'rgba(255,255,255,0.4)',
+            color: 'var(--text-faint)',
             textTransform: 'uppercase',
-            marginBottom: 12,
+            marginBottom: 10,
           }}
         >
           КАК ЗАРАБОТАТЬ XP
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {[
             ['Намаз выполнен', '+10 XP'],
             ['Все 5 намазов за день', '+30 XP'],
@@ -438,14 +462,20 @@ export function Levels() {
               }}
             >
               <span
-                className="font-mono"
-                style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  color: 'var(--text-subtle)',
+                }}
               >
                 {label}
               </span>
               <span
-                className="font-mono"
-                style={{ fontSize: 11, color: '#e8c96a' }}
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  color: 'var(--gold-text)',
+                }}
               >
                 {value}
               </span>

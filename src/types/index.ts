@@ -68,7 +68,12 @@ export interface AppState {
   notificationSettings: NotificationSettings
   pushSubscription: string | null
 
+  // Custom habits
+  customHabits: HabitDefinition[]
+
   // Actions
+  addCustomHabit: (habit: HabitDefinition) => void
+  removeCustomHabit: (id: string) => void
   toggleHabit: (date: string, habitId: string) => void
   togglePrayer: (date: string, prayerId: string) => void
   toggleDeposit: (month: string) => void

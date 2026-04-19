@@ -3,6 +3,33 @@ import { useHealthStore } from '../../store/useHealthStore'
 import { TEST_CHECKLIST, SPECIALIST_LIST } from '../../utils/healthConstants'
 import { todayStr } from '../../utils/dates'
 
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  background: 'var(--color-dusk)',
+  borderRadius: 8,
+  padding: '10px 12px',
+  fontFamily: "'JetBrains Mono', monospace",
+  fontSize: 13,
+  color: 'var(--text-primary)',
+  outline: 'none',
+  border: '1px solid var(--border-muted)',
+}
+
+const sectionLabel: React.CSSProperties = {
+  fontFamily: "'JetBrains Mono', monospace",
+  fontSize: 9,
+  letterSpacing: 2,
+  color: 'var(--text-faint)',
+  textTransform: 'uppercase',
+}
+
+const cardStyle: React.CSSProperties = {
+  background: 'var(--surface-overlay)',
+  borderRadius: 16,
+  padding: 16,
+  border: '1px solid var(--border-muted)',
+}
+
 export function Doctors() {
   const health = useHealthStore()
   const [showAddVisit, setShowAddVisit] = useState(false)
@@ -44,25 +71,33 @@ export function Doctors() {
     setResultForm({ testName: '', value: '', unit: '', normalMin: '', normalMax: '', source: '' })
   }
 
-  const inputCls = "w-full bg-dusk rounded px-3 py-2 font-mono text-sm text-txt outline-none border border-dusk focus:border-gold/30"
-
   return (
-    <div className="space-y-6">
-      <h2 className="text-h1 text-gold">Анализы и врачи</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontSize: 24, color: 'var(--gold-text)', margin: 0 }}>Анализы и врачи</h2>
 
       {/* Test checklist */}
-      <div className="bg-twilight rounded-2xl p-4 border border-dusk">
-        <p className="font-mono text-xs text-ink-mute uppercase tracking-wider mb-3">Чек-лист анализов</p>
-        <div className="space-y-2">
+      <div style={cardStyle}>
+        <p style={{ ...sectionLabel, marginBottom: 12 }}>Чек-лист анализов</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {TEST_CHECKLIST.map(test => {
             const done = health.testChecklist[test] ?? false
             return (
               <button key={test} onClick={() => health.toggleTestChecklist(test)}
-                className="flex items-center gap-3 w-full text-left">
-                <span className={`w-5 h-5 rounded border-2 flex items-center justify-center text-xs ${
-                  done ? 'bg-sacred/20 border-sacred text-sacred' : 'border-dusk'
-                }`}>{done ? '✓' : ''}</span>
-                <span className={`font-mono text-sm ${done ? 'text-ink-mute line-through' : 'text-txt'}`}>{test}</span>
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
+                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                }}>
+                <span style={{
+                  width: 20, height: 20, borderRadius: 4, border: done ? '2px solid #4caf82' : '2px solid #151d35',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12,
+                  background: done ? 'rgba(76,175,130,0.2)' : 'transparent', color: '#4caf82',
+                  flexShrink: 0,
+                }}>{done ? '✓' : ''}</span>
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: 13,
+                  color: done ? 'var(--text-faint)' : 'var(--text-secondary)',
+                  textDecoration: done ? 'line-through' : 'none',
+                }}>{test}</span>
               </button>
             )
           })}
@@ -71,48 +106,53 @@ export function Doctors() {
 
       {/* Doctor visits */}
       <div>
-        <div className="flex justify-between items-center mb-3">
-          <p className="font-mono text-xs text-ink-mute uppercase tracking-wider">Записи к врачам</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <p style={sectionLabel}>Записи к врачам</p>
           <button onClick={() => setShowAddVisit(!showAddVisit)}
-            className="font-mono text-xs text-gold">{showAddVisit ? 'Отмена' : '+ Добавить'}</button>
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: '#c9a84c', background: 'none', border: 'none', cursor: 'pointer' }}>
+            {showAddVisit ? 'Отмена' : '+ Добавить'}
+          </button>
         </div>
 
         {showAddVisit && (
-          <div className="bg-twilight rounded-2xl p-4 border border-gold/20 space-y-3 mb-3">
-            <div className="grid grid-cols-2 gap-2">
-              <input type="date" value={visitForm.date} onChange={e => setVisitForm({...visitForm, date: e.target.value})} className={inputCls} />
-              <input type="time" value={visitForm.time} onChange={e => setVisitForm({...visitForm, time: e.target.value})} className={inputCls} />
+          <div style={{ ...cardStyle, border: '1px solid rgba(201,168,76,0.2)', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <input type="date" value={visitForm.date} onChange={e => setVisitForm({...visitForm, date: e.target.value})} style={inputStyle} />
+              <input type="time" value={visitForm.time} onChange={e => setVisitForm({...visitForm, time: e.target.value})} style={inputStyle} />
             </div>
-            <select value={visitForm.specialist} onChange={e => setVisitForm({...visitForm, specialist: e.target.value})} className={inputCls}>
+            <select value={visitForm.specialist} onChange={e => setVisitForm({...visitForm, specialist: e.target.value})} style={inputStyle}>
               {SPECIALIST_LIST.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
-            <input placeholder="Клиника" value={visitForm.clinic} onChange={e => setVisitForm({...visitForm, clinic: e.target.value})} className={inputCls} />
-            <input placeholder="Причина визита" value={visitForm.reason} onChange={e => setVisitForm({...visitForm, reason: e.target.value})} className={inputCls} />
-            <button onClick={handleAddVisit} className="w-full py-2 bg-gold/20 text-gold font-mono text-sm rounded">Добавить запись</button>
+            <input placeholder="Клиника" value={visitForm.clinic} onChange={e => setVisitForm({...visitForm, clinic: e.target.value})} style={inputStyle} />
+            <input placeholder="Причина визита" value={visitForm.reason} onChange={e => setVisitForm({...visitForm, reason: e.target.value})} style={inputStyle} />
+            <button onClick={handleAddVisit} style={{
+              width: '100%', padding: '10px 0', background: 'rgba(201,168,76,0.2)', color: '#c9a84c',
+              fontFamily: "'JetBrains Mono', monospace", fontSize: 13, borderRadius: 8, border: 'none', cursor: 'pointer',
+            }}>Добавить запись</button>
           </div>
         )}
 
-        <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {health.doctorVisits.sort((a, b) => a.date.localeCompare(b.date)).map(visit => {
-            const statusColors = { planned: 'text-calm', visited: 'text-sacred', cancelled: 'text-danger' }
-            const statusLabels = { planned: 'Запланировано', visited: 'Прошёл', cancelled: 'Отменён' }
+            const statusColors: Record<string, string> = { planned: '#5a9ae0', visited: '#4caf82', cancelled: '#e05a5a' }
+            const statusLabels: Record<string, string> = { planned: 'Запланировано', visited: 'Прошёл', cancelled: 'Отменён' }
             return (
-              <div key={visit.id} className="bg-twilight rounded-2xl p-4 border border-dusk">
-                <div className="flex justify-between items-start">
+              <div key={visit.id} style={cardStyle}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <p className="font-mono text-sm text-txt">{visit.date} {visit.time}</p>
-                    <p className="font-heading text-base text-txt">{visit.specialist} — {visit.clinic}</p>
-                    {visit.reason && <p className="font-mono text-xs text-ink-mute mt-1">{visit.reason}</p>}
-                    {visit.notes && <p className="font-mono text-xs text-ink-mute mt-1 italic">{visit.notes}</p>}
+                    <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{visit.date} {visit.time}</p>
+                    <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 16, color: 'var(--text-secondary)', margin: '2px 0 0' }}>{visit.specialist} — {visit.clinic}</p>
+                    {visit.reason && <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'var(--text-faint)', marginTop: 4 }}>{visit.reason}</p>}
+                    {visit.notes && <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'var(--text-faint)', marginTop: 4, fontStyle: 'italic' }}>{visit.notes}</p>}
                   </div>
-                  <span className={`font-mono text-[10px] ${statusColors[visit.status]}`}>{statusLabels[visit.status]}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: statusColors[visit.status] }}>{statusLabels[visit.status]}</span>
                 </div>
                 {visit.status === 'planned' && (
-                  <div className="flex gap-2 mt-3">
+                  <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                     <button onClick={() => health.updateDoctorVisit(visit.id, { status: 'visited' })}
-                      className="flex-1 py-1.5 bg-sacred/10 text-sacred font-mono text-xs rounded">Прошёл</button>
+                      style={{ flex: 1, padding: '6px 0', background: 'rgba(76,175,130,0.1)', color: '#4caf82', fontFamily: "'JetBrains Mono', monospace", fontSize: 12, borderRadius: 8, border: 'none', cursor: 'pointer' }}>Прошёл</button>
                     <button onClick={() => health.updateDoctorVisit(visit.id, { status: 'cancelled' })}
-                      className="flex-1 py-1.5 bg-danger/10 text-danger font-mono text-xs rounded">Отменён</button>
+                      style={{ flex: 1, padding: '6px 0', background: 'rgba(224,90,90,0.1)', color: '#e05a5a', fontFamily: "'JetBrains Mono', monospace", fontSize: 12, borderRadius: 8, border: 'none', cursor: 'pointer' }}>Отменён</button>
                   </div>
                 )}
                 {visit.status === 'visited' && !visit.notes && (
@@ -120,7 +160,7 @@ export function Doctors() {
                     const note = prompt('Заметка после визита:')
                     if (note) health.updateDoctorVisit(visit.id, { notes: note })
                   }}
-                    className="mt-2 font-mono text-xs text-gold/50 hover:text-gold">+ Добавить заметку</button>
+                    style={{ marginTop: 8, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'var(--gold-text-label)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>+ Добавить заметку</button>
                 )}
               </div>
             )
@@ -130,59 +170,67 @@ export function Doctors() {
 
       {/* Test results */}
       <div>
-        <div className="flex justify-between items-center mb-3">
-          <p className="font-mono text-xs text-ink-mute uppercase tracking-wider">Результаты анализов</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <p style={sectionLabel}>Результаты анализов</p>
           <button onClick={() => setShowAddResult(!showAddResult)}
-            className="font-mono text-xs text-gold">{showAddResult ? 'Отмена' : '+ Добавить'}</button>
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: '#c9a84c', background: 'none', border: 'none', cursor: 'pointer' }}>
+            {showAddResult ? 'Отмена' : '+ Добавить'}
+          </button>
         </div>
 
         {showAddResult && (
-          <div className="bg-twilight rounded-2xl p-4 border border-gold/20 space-y-3 mb-3">
+          <div style={{ ...cardStyle, border: '1px solid rgba(201,168,76,0.2)', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
             <input placeholder="Название (ТТГ, Витамин D...)" value={resultForm.testName}
-              onChange={e => setResultForm({...resultForm, testName: e.target.value})} className={inputCls} />
-            <div className="grid grid-cols-3 gap-2">
+              onChange={e => setResultForm({...resultForm, testName: e.target.value})} style={inputStyle} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
               <input placeholder="Значение" type="number" value={resultForm.value}
-                onChange={e => setResultForm({...resultForm, value: e.target.value})} className={inputCls} />
+                onChange={e => setResultForm({...resultForm, value: e.target.value})} style={inputStyle} />
               <input placeholder="Ед." value={resultForm.unit}
-                onChange={e => setResultForm({...resultForm, unit: e.target.value})} className={inputCls} />
+                onChange={e => setResultForm({...resultForm, unit: e.target.value})} style={inputStyle} />
               <input placeholder="Источник" value={resultForm.source}
-                onChange={e => setResultForm({...resultForm, source: e.target.value})} className={inputCls} />
+                onChange={e => setResultForm({...resultForm, source: e.target.value})} style={inputStyle} />
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <input placeholder="Норма мин" type="number" value={resultForm.normalMin}
-                onChange={e => setResultForm({...resultForm, normalMin: e.target.value})} className={inputCls} />
+                onChange={e => setResultForm({...resultForm, normalMin: e.target.value})} style={inputStyle} />
               <input placeholder="Норма макс" type="number" value={resultForm.normalMax}
-                onChange={e => setResultForm({...resultForm, normalMax: e.target.value})} className={inputCls} />
+                onChange={e => setResultForm({...resultForm, normalMax: e.target.value})} style={inputStyle} />
             </div>
-            <button onClick={handleAddResult} className="w-full py-2 bg-gold/20 text-gold font-mono text-sm rounded">Сохранить результат</button>
+            <button onClick={handleAddResult} style={{
+              width: '100%', padding: '10px 0', background: 'rgba(201,168,76,0.2)', color: '#c9a84c',
+              fontFamily: "'JetBrains Mono', monospace", fontSize: 13, borderRadius: 8, border: 'none', cursor: 'pointer',
+            }}>Сохранить результат</button>
           </div>
         )}
 
-        <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {health.testResults.sort((a, b) => b.date.localeCompare(a.date)).map(r => {
             const pct = ((r.value - r.normalMin) / (r.normalMax - r.normalMin)) * 100
-            const statusColor = r.status === 'normal' ? 'sacred' : r.status === 'high' ? 'danger' : 'gold'
+            const statusColorMap: Record<string, string> = { normal: '#4caf82', high: '#e05a5a', low: '#c9a84c' }
+            const statusColor = statusColorMap[r.status] || '#c9a84c'
             return (
-              <div key={r.id} className="bg-twilight rounded-2xl p-4 border border-dusk">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-mono text-sm text-txt">{r.testName}</span>
-                  <span className="font-mono text-xs text-ink-mute">{r.date}</span>
+              <div key={r.id} style={cardStyle}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: 'var(--text-secondary)' }}>{r.testName}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'var(--text-faint)' }}>{r.date}</span>
                 </div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`font-mono text-lg font-bold text-${statusColor}`}>{r.value}</span>
-                  <span className="font-mono text-xs text-ink-mute">{r.unit}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, fontWeight: 700, color: statusColor }}>{r.value}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'var(--text-faint)' }}>{r.unit}</span>
                 </div>
                 {/* Reference range bar */}
-                <div className="relative h-2 bg-dusk rounded-full mt-2">
-                  <div className="absolute h-full bg-sacred/30 rounded-full" style={{ left: '0%', width: '100%' }} />
-                  <div className={`absolute w-2 h-2 rounded-full bg-${statusColor} top-0`}
-                    style={{ left: `${Math.min(100, Math.max(0, pct))}%`, transform: 'translateX(-50%)' }} />
+                <div style={{ position: 'relative', height: 8, background: 'var(--color-dusk)', borderRadius: 4, marginTop: 8 }}>
+                  <div style={{ position: 'absolute', height: '100%', background: 'rgba(76,175,130,0.3)', borderRadius: 4, left: '0%', width: '100%' }} />
+                  <div style={{
+                    position: 'absolute', width: 8, height: 8, borderRadius: '50%', background: statusColor, top: 0,
+                    left: `${Math.min(100, Math.max(0, pct))}%`, transform: 'translateX(-50%)',
+                  }} />
                 </div>
-                <div className="flex justify-between mt-1">
-                  <span className="font-mono text-[10px] text-ink-mute">{r.normalMin}</span>
-                  <span className="font-mono text-[10px] text-ink-mute">{r.normalMax}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'var(--text-faint)' }}>{r.normalMin}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'var(--text-faint)' }}>{r.normalMax}</span>
                 </div>
-                {r.source && <p className="font-mono text-[10px] text-ink-mute mt-1">{r.source}</p>}
+                {r.source && <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'var(--text-faint)', marginTop: 4 }}>{r.source}</p>}
               </div>
             )
           })}

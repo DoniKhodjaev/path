@@ -18,6 +18,12 @@ export const HABITS: HabitDefinition[] = [
   { id: 'plan-tomorrow', label: 'Записал план на завтра', category: 'work' },
 ]
 
+export const DEFAULT_HABIT_IDS = new Set(HABITS.map(h => h.id))
+
+export function getAllHabits(customHabits: HabitDefinition[]): HabitDefinition[] {
+  return [...HABITS, ...customHabits]
+}
+
 export const PRAYER_IDS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const
 
 export const PRAYER_LABELS: Record<string, string> = {

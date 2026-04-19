@@ -13,16 +13,38 @@ export function Health() {
 
   if (sub !== 'main') {
     return (
-      <div className="p-4 pb-20">
-        <button onClick={() => setSub('main')} className="font-mono text-xs text-gold/50 hover:text-gold mb-4 flex items-center gap-1">
+      <div style={{
+        height: 'calc(100dvh - 70px - env(safe-area-inset-bottom, 0px))',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 'calc(16px + env(safe-area-inset-top, 0px)) 20px 0',
+      }}>
+        <button
+          onClick={() => setSub('main')}
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 11,
+            color: 'rgba(201,168,76,0.5)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '8px 0',
+            marginBottom: 8,
+            textAlign: 'left',
+            flexShrink: 0,
+          }}
+        >
           ← Здоровье
         </button>
-        {sub === 'doctors' && <Doctors />}
-        {sub === 'symptoms' && <Symptoms />}
-        {sub === 'weight' && <Weight />}
-        {sub === 'sleep' && <Sleep />}
-        {sub === 'vitamins' && <Vitamins />}
-        {sub === 'photos' && <Photos />}
+        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 16 }}>
+          {sub === 'doctors' && <Doctors />}
+          {sub === 'symptoms' && <Symptoms />}
+          {sub === 'weight' && <Weight />}
+          {sub === 'sleep' && <Sleep />}
+          {sub === 'vitamins' && <Vitamins />}
+          {sub === 'photos' && <Photos />}
+        </div>
       </div>
     )
   }
