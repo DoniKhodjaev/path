@@ -19,7 +19,7 @@ interface PrayerData {
   countdown: string
 }
 
-const PRAYER_MAP: { prayer: Prayer; name: PrayerName; label: string }[] = [
+const PRAYER_MAP: { prayer: typeof Prayer[keyof typeof Prayer]; name: PrayerName; label: string }[] = [
   { prayer: Prayer.Fajr, name: 'fajr', label: 'Фаджр' },
   { prayer: Prayer.Dhuhr, name: 'dhuhr', label: 'Зухр' },
   { prayer: Prayer.Asr, name: 'asr', label: 'Аср' },
