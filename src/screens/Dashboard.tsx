@@ -93,7 +93,7 @@ export function Dashboard() {
       style={{
         position: 'relative',
         zIndex: 1,
-        padding: 'calc(24px + env(safe-area-inset-top, 0px)) 20px 0',
+        padding: 'calc(9px + env(safe-area-inset-top, 0px)) 20px 0',
         height: 'calc(100dvh - 70px - env(safe-area-inset-bottom, 0px))',
         overflow: 'hidden',
         display: 'flex',
